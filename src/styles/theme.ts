@@ -15,26 +15,35 @@ export const lightTheme = {
         warning: '#f59e0b',
         info: '#3b82f6',
 
-        // Background colors
-        background: '#ffffff',
+        // Kairos Brand Colors
+        offWhite: '#F8FAFC',
+        charcoal: '#1E293B',
+        slateGray: '#64748B',
+        azulKairos: '#0052FF',
+        rojoCarmesi: '#DC2626',
+        ambar: '#F59E0B',
+        verdeEsmeralda: '#10B981',
+
+        // Background colors (using Kairos palette)
+        background: '#F8FAFC',  // Off-White
         backgroundSecondary: '#f9fafb',
         surface: '#ffffff',
         surfaceHover: '#f3f4f6',
 
-        // Text colors
-        text: '#111827',
-        textSecondary: '#6b7280',
+        // Text colors (using Kairos palette)
+        text: '#1E293B',  // Charcoal
+        textSecondary: '#64748B',  // Slate Gray
         textTertiary: '#9ca3af',
 
         // Border colors
         border: '#e5e7eb',
         borderHover: '#d1d5db',
 
-        // Priority colors (for tasks)
-        priorityLow: '#10b981',
-        priorityMedium: '#f59e0b',
-        priorityHigh: '#f97316',
-        priorityUrgent: '#ef4444',
+        // Priority colors (Kairos specific)
+        priorityLow: '#0052FF',  // Azul Kairos
+        priorityMedium: '#F59E0B',  // Ambar
+        priorityHigh: '#DC2626',  // Rojo Carmesí
+        priorityUrgent: '#DC2626',  // Rojo Carmesí
     },
 
     spacing: {
@@ -79,6 +88,10 @@ export const lightTheme = {
         md: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
         lg: '0 10px 15px -3px rgb(0 0 0 / 0.1)',
         xl: '0 20px 25px -5px rgb(0 0 0 / 0.1)',
+        // Task-specific shadows
+        taskCard: '0 1px 3px 0 rgb(0 0 0 / 0.08)',
+        taskCardHover: '0 8px 16px -4px rgb(0 0 0 / 0.12)',
+        quickAdd: '0 2px 8px 0 rgb(0 0 0 / 0.06)',
     },
 
     transitions: {

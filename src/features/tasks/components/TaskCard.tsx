@@ -1,10 +1,21 @@
-import React from 'react';
-import styled, { css } from 'styled-components';
+import React, { useState } from 'react';
+import styled, { css, keyframes } from 'styled-components';
 import { Check, Clock } from 'lucide-react';
 import { useTimerStore } from '@/store/useTimerStore';
 import { formatDuration } from '@/utils/timeUtils';
 import type { Task, TaskPriority } from '@/types';
 import { useGoalStore } from '../../../stores/useGoalStore';
+
+// Importar animaciones de La Fluidez
+const strikeThrough = keyframes`
+  from { width: 0; }
+  to { width: 100%; }
+`;
+
+const pulseGreen = keyframes`
+  0%, 100% { opacity: 0; }
+  50% { opacity: 0.15; }
+`;
 
 interface TaskCardProps {
   task: Task;
@@ -12,16 +23,16 @@ interface TaskCardProps {
   onClick?: (task: Task) => void;
 }
 
-const Card = styled.div<{ $completed: boolean }>`
+const Card = styled.div<{ $completed: boolean; $isCompleting?: boolean }>`
   display: flex;
   align-items: center;
   gap: ${({ theme }) => theme.spacing.md};
   padding: ${({ theme }) => theme.spacing.md} ${({ theme }) => theme.spacing.lg};
   background: ${({ theme }) => theme.colors.surface};
-  border-radius: 8px;
+  border-radius: ${({ theme }) => theme.borderRadius.card};
   box-shadow: ${({ theme }) => theme.shadows.taskCard};
   cursor: pointer;
-  transition: all ${({ theme }) => theme.transitions.base};
+  transition: all ${({ theme }) => theme.transitions.quick};
   position: relative;
 
   &:hover {
@@ -29,10 +40,29 @@ const Card = styled.div<{ $completed: boolean }>`
     transform: translateY(-2px);
   }
 
+  &:active {
+    transform: translateY(0);
+  }
+
   ${({ $completed }) =>
     $completed &&
     css`
       opacity: 0.7;
+    `}
+
+  ${({ $isCompleting, theme }) =>
+    $isCompleting &&
+    css`
+      &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: ${theme.colors.kairosVerdeEsmeralda};
+        opacity: 0;
+        border-radius: ${theme.borderRadius.card};
+        animation: ${pulseGreen} 400ms ease-out;
+        pointer-events: none;
+      }
     `}
 `;
 
@@ -63,24 +93,30 @@ const Checkbox = styled.button<{ $checked: boolean }>`
   height: 24px;
   border-radius: 50%;
   border: 2px solid ${({ theme, $checked }) =>
-    $checked ? theme.colors.success : theme.colors.border};
+    $checked ? theme.colors.kairosVerdeEsmeralda : theme.colors.border};
   background: ${({ theme, $checked }) =>
-    $checked ? theme.colors.success : 'transparent'};
+    $checked ? theme.colors.kairosVerdeEsmeralda : 'transparent'};
   cursor: pointer;
-  transition: all ${({ theme }) => theme.transitions.fast};
+  transition: all ${({ theme }) => theme.transitions.quick};
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0;
 
   &:hover {
-    border-color: ${({ theme }) => theme.colors.success};
+    border-color: ${({ theme }) => theme.colors.kairosVerdeEsmeralda};
+    background: ${({ $checked, theme }) =>
+    $checked ? theme.colors.kairosVerdeEsmeralda : 'rgba(16, 185, 129, 0.1)'};
+  }
+
+  &:active {
+    transform: scale(0.95);
   }
 
   svg {
     color: white;
     opacity: ${({ $checked }) => ($checked ? 1 : 0)};
-    transition: opacity ${({ theme }) => theme.transitions.fast};
+    transition: opacity ${({ theme }) => theme.transitions.quick};
   }
 `;
 
@@ -94,9 +130,24 @@ const TaskTitle = styled.p<{ $completed: boolean }>`
   font-size: ${({ theme }) => theme.fontSize.base};
   color: ${({ theme, $completed }) =>
     $completed ? theme.colors.textSecondary : theme.colors.text};
-  text-decoration: ${({ $completed }) => ($completed ? 'line-through' : 'none')};
-  transition: all ${({ theme }) => theme.transitions.base};
+  transition: color ${({ theme }) => theme.transitions.quick};
   word-break: break-word;
+  position: relative;
+
+  ${({ $completed, theme }) =>
+    $completed &&
+    css`
+      &::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        height: 1.5px;
+        background: ${theme.colors.textSecondary};
+        width: 100%;
+        animation: ${strikeThrough} 300ms ease-out;
+      }
+    `}
 `;
 
 const TimeIndicator = styled.div`
@@ -123,6 +174,7 @@ const GoalPill = styled.span`
 
 export const TaskCard: React.FC<TaskCardProps> = ({ task, onToggle, onClick }) => {
   const isCompleted = task.status === 'DONE';
+  const [isCompleting, setIsCompleting] = useState(false);
   const { timeSpent } = useTimerStore();
   const { getGoal } = useGoalStore();
   const taskTimeSpent = timeSpent[task.id] || 0;
@@ -131,7 +183,17 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onToggle, onClick }) =
 
   const handleCheckboxClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    onToggle(task.id);
+
+    // Animación al completar
+    if (!isCompleted) {
+      setIsCompleting(true);
+      setTimeout(() => {
+        setIsCompleting(false);
+        onToggle(task.id);
+      }, 400); // Duración de la animación pulseGreen
+    } else {
+      onToggle(task.id);
+    }
   };
 
   const handleCardClick = () => {
@@ -139,7 +201,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onToggle, onClick }) =
   };
 
   return (
-    <Card $completed={isCompleted} onClick={handleCardClick} className="animate-fade-up">
+    <Card $completed={isCompleted} $isCompleting={isCompleting} onClick={handleCardClick}>
       <PriorityIndicator $priority={task.priority} />
       <Checkbox
         $checked={isCompleted}

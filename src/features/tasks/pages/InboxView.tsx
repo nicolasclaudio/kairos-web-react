@@ -9,6 +9,7 @@ import { FocusMode } from '../../timer/components/FocusMode';
 import { useTasksStore } from '@/store/useTasksStore';
 import { useTimerStore } from '@/store/useTimerStore';
 import { useTimer } from '@/hooks/useTimer';
+import { PageTransition } from '@/components/common';
 
 const PageContainer = styled.div`
   min-height: 100vh;
@@ -108,51 +109,53 @@ export const InboxView: React.FC = () => {
   };
 
   return (
-    <PageContainer>
-      <ContentWrapper>
-        <Header>
-          <Title>Kairos / Inbox</Title>
-          <Subtitle>{today}</Subtitle>
-        </Header>
+    <PageTransition>
+      <PageContainer>
+        <ContentWrapper>
+          <Header>
+            <Title>Kairos / Inbox</Title>
+            <Subtitle>{today}</Subtitle>
+          </Header>
 
-        <QuickAddInput onAdd={handleAddTask} />
+          <QuickAddInput onAdd={handleAddTask} />
 
-        <TaskList
-          tasks={tasks}
-          onToggle={toggleTask}
-          onTaskClick={(task) => openDrawer(task.id)}
+          <TaskList
+            tasks={tasks}
+            onToggle={toggleTask}
+            onTaskClick={(task) => openDrawer(task.id)}
+          />
+        </ContentWrapper>
+
+        <TaskDrawer
+          task={selectedTask}
+          isOpen={isDrawerOpen}
+          onClose={closeDrawer}
+          onUpdate={updateTask}
+          onComplete={toggleTask}
+          onDelete={deleteTask}
         />
-      </ContentWrapper>
 
-      <TaskDrawer
-        task={selectedTask}
-        isOpen={isDrawerOpen}
-        onClose={closeDrawer}
-        onUpdate={updateTask}
-        onComplete={toggleTask}
-        onDelete={deleteTask}
-      />
+        <TimerWidget
+          timeRemaining={timeRemaining}
+          progress={progress}
+          isActive={isActive}
+          isPaused={isPaused}
+          onExpand={toggleFocusMode}
+        />
 
-      <TimerWidget
-        timeRemaining={timeRemaining}
-        progress={progress}
-        isActive={isActive}
-        isPaused={isPaused}
-        onExpand={toggleFocusMode}
-      />
-
-      <FocusMode
-        isOpen={isInFocusMode}
-        timeRemaining={timeRemaining}
-        taskTitle={activeTaskTitle || ''}
-        isActive={isActive}
-        isPaused={isPaused}
-        isCompleted={isCompleted}
-        onClose={toggleFocusMode}
-        onPlay={handlePlay}
-        onPause={pauseTimer}
-        onReset={resetTimer}
-      />
-    </PageContainer>
+        <FocusMode
+          isOpen={isInFocusMode}
+          timeRemaining={timeRemaining}
+          taskTitle={activeTaskTitle || ''}
+          isActive={isActive}
+          isPaused={isPaused}
+          isCompleted={isCompleted}
+          onClose={toggleFocusMode}
+          onPlay={handlePlay}
+          onPause={pauseTimer}
+          onReset={resetTimer}
+        />
+      </PageContainer>
+    </PageTransition>
   );
 };

@@ -86,7 +86,7 @@ const NotificationItem = styled.div<{ $read: boolean }>`
   border-bottom: 1px solid ${({ theme }) => theme.colors.border};
   cursor: pointer;
   transition: background 0.2s ease;
-  background: ${({ $read, theme }) => $read ? 'transparent' : 'rgba(0, 82, 255, 0.03)'};
+  background: ${({ $read }) => $read ? 'transparent' : 'rgba(0, 82, 255, 0.03)'};
 
   &:hover {
     background: ${({ theme }) => theme.colors.background};
@@ -114,14 +114,14 @@ const NotificationIcon = styled.div<{ $type: string }>`
   flex-shrink: 0;
   font-size: 1rem;
   background: ${({ $type }) => {
-        switch ($type) {
-            case 'info': return 'rgba(0, 82, 255, 0.1)';
-            case 'success': return 'rgba(16, 185, 129, 0.1)';
-            case 'warning': return 'rgba(245, 158, 11, 0.1)';
-            case 'error': return 'rgba(225, 29, 72, 0.1)';
-            default: return 'rgba(0, 82, 255, 0.1)';
-        }
-    }};
+    switch ($type) {
+      case 'info': return 'rgba(0, 82, 255, 0.1)';
+      case 'success': return 'rgba(16, 185, 129, 0.1)';
+      case 'warning': return 'rgba(245, 158, 11, 0.1)';
+      case 'error': return 'rgba(225, 29, 72, 0.1)';
+      default: return 'rgba(0, 82, 255, 0.1)';
+    }
+  }};
 `;
 
 const NotificationContent = styled.div`
@@ -155,78 +155,78 @@ const EmptyState = styled.div`
 `;
 
 export const NotificationCenter: React.FC = () => {
-    const {
-        notifications,
-        isNotificationCenterOpen,
-        closeNotificationCenter,
-        markAsRead,
-        markAllAsRead,
-        clearNotifications,
-    } = useNotificationStore();
+  const {
+    notifications,
+    isNotificationCenterOpen,
+    closeNotificationCenter,
+    markAsRead,
+    markAllAsRead,
+    clearNotifications,
+  } = useNotificationStore();
 
-    const handleNotificationClick = (id: string) => {
-        markAsRead(id);
-    };
+  const handleNotificationClick = (id: string) => {
+    markAsRead(id);
+  };
 
-    return (
-        <AnimatePresence>
-            {isNotificationCenterOpen && (
-                <>
-                    <Overlay
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        onClick={closeNotificationCenter}
-                    />
-                    <Panel
-                        initial={{ opacity: 0, y: -20, scale: 0.95 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: -20, scale: 0.95 }}
-                        transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-                    >
-                        <Header>
-                            <Title>Notificaciones</Title>
-                            <Actions>
-                                <ActionButton onClick={markAllAsRead} title="Marcar todo como leído">
-                                    <CheckCheck size={18} />
-                                </ActionButton>
-                                <ActionButton onClick={clearNotifications} title="Limpiar todo">
-                                    <Trash2 size={18} />
-                                </ActionButton>
-                            </Actions>
-                        </Header>
-                        <NotificationList>
-                            {notifications.length === 0 ? (
-                                <EmptyState>No tienes notificaciones</EmptyState>
-                            ) : (
-                                notifications.map((notification) => (
-                                    <NotificationItem
-                                        key={notification.id}
-                                        $read={notification.read}
-                                        onClick={() => handleNotificationClick(notification.id)}
-                                    >
-                                        <NotificationHeader>
-                                            <NotificationIcon $type={notification.type}>
-                                                {notification.icon || '🔔'}
-                                            </NotificationIcon>
-                                            <NotificationContent>
-                                                <NotificationTitle>{notification.title}</NotificationTitle>
-                                                <NotificationMessage>{notification.message}</NotificationMessage>
-                                                <NotificationTime>
-                                                    {formatDistanceToNow(new Date(notification.timestamp), {
-                                                        addSuffix: true,
-                                                        locale: es,
-                                                    })}
-                                                </NotificationTime>
-                                            </NotificationContent>
-                                        </NotificationHeader>
-                                    </NotificationItem>
-                                ))
-                            )}
-                        </NotificationList>
-                    </Panel>
-                </>
-            )}
-        </AnimatePresence>
-    );
+  return (
+    <AnimatePresence>
+      {isNotificationCenterOpen && (
+        <>
+          <Overlay
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={closeNotificationCenter}
+          />
+          <Panel
+            initial={{ opacity: 0, y: -20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.95 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+          >
+            <Header>
+              <Title>Notificaciones</Title>
+              <Actions>
+                <ActionButton onClick={markAllAsRead} title="Marcar todo como leído">
+                  <CheckCheck size={18} />
+                </ActionButton>
+                <ActionButton onClick={clearNotifications} title="Limpiar todo">
+                  <Trash2 size={18} />
+                </ActionButton>
+              </Actions>
+            </Header>
+            <NotificationList>
+              {notifications.length === 0 ? (
+                <EmptyState>No tienes notificaciones</EmptyState>
+              ) : (
+                notifications.map((notification) => (
+                  <NotificationItem
+                    key={notification.id}
+                    $read={notification.read}
+                    onClick={() => handleNotificationClick(notification.id)}
+                  >
+                    <NotificationHeader>
+                      <NotificationIcon $type={notification.type}>
+                        {notification.icon || '🔔'}
+                      </NotificationIcon>
+                      <NotificationContent>
+                        <NotificationTitle>{notification.title}</NotificationTitle>
+                        <NotificationMessage>{notification.message}</NotificationMessage>
+                        <NotificationTime>
+                          {formatDistanceToNow(new Date(notification.timestamp), {
+                            addSuffix: true,
+                            locale: es,
+                          })}
+                        </NotificationTime>
+                      </NotificationContent>
+                    </NotificationHeader>
+                  </NotificationItem>
+                ))
+              )}
+            </NotificationList>
+          </Panel>
+        </>
+      )}
+    </AnimatePresence>
+  );
 };

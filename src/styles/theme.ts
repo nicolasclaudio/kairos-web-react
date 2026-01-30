@@ -58,12 +58,15 @@ export const lightTheme = {
     },
 
     borderRadius: {
-        sm: '0.25rem',
-        md: '0.5rem',
-        lg: '0.75rem',
-        xl: '1rem',
-        '2xl': '1.5rem',
+        sm: '0.25rem',      // 4px
+        md: '0.5rem',       // 8px - Cards (TaskCard, MetricCard, GoalCard)
+        lg: '0.75rem',      // 12px - Containers (DashboardLayout, Modals)
+        xl: '1rem',         // 16px
+        '2xl': '1.5rem',    // 24px
         full: '9999px',
+        // Semantic aliases for La Fluidez
+        card: '0.5rem',     // 8px - Tarjetas
+        container: '0.75rem', // 12px - Contenedores grandes
     },
 
     fontSize: {
@@ -100,6 +103,10 @@ export const lightTheme = {
         base: '300ms ease-in-out',
         normal: '300ms ease-in-out',
         slow: '500ms ease-in-out',
+        // La Fluidez timings (200-300ms para agilidad)
+        quick: '200ms ease-out',      // Hover, click feedback
+        smooth: '250ms ease-out',     // Page transitions, slides
+        gentle: '300ms ease-in-out',  // Expansiones, collapses
     },
 
     typography: {

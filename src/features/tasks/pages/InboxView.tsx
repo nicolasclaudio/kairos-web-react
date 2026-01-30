@@ -4,7 +4,11 @@ import { format } from 'date-fns';
 import { QuickAddInput } from '../components/QuickAddInput';
 import { TaskList } from '../components/TaskList';
 import { TaskDrawer } from '../components/TaskDrawer';
+import { TimerWidget } from '../../timer/components/TimerWidget';
+import { FocusMode } from '../../timer/components/FocusMode';
 import { useTasksStore } from '@/store/useTasksStore';
+import { useTimerStore } from '@/store/useTimerStore';
+import { useTimer } from '@/hooks/useTimer';
 import type { Task } from '@/types';
 
 const PageContainer = styled.div`
@@ -52,21 +56,66 @@ export const InboxView: React.FC = () => {
     closeDrawer,
   } = useTasksStore();
 
+  const {
+    activeTaskId,
+    activeTaskTitle,
+    isInFocusMode,
+    toggleFocusMode,
+    endSession,
+  } = useTimerStore();
+
+  const {
+    timeRemaining,
+    isActive,
+    isPaused,
+    isCompleted,
+    progress,
+    startTimer,
+    pauseTimer,
+    resumeTimer,
+    resetTimer,
+  } = useTimer();
+
   const today = format(new Date(), 'EEEE, MMMM d, yyyy');
   const selectedTask = tasks.find(t => t.id === selectedTaskId) || null;
+
+  // Start timer when session begins
+  React.useEffect(() => {
+    const { activeTaskId, duration } = useTimerStore.getState();
+    if (activeTaskId && duration > 0) {
+      startTimer(duration);
+    }
+  }, [useTimerStore.getState().activeTaskId]);
+
+  // Handle timer completion
+  React.useEffect(() => {
+    if (isCompleted && activeTaskId) {
+      const { duration } = useTimerStore.getState();
+      endSession(duration);
+    }
+  }, [isCompleted, activeTaskId, endSession]);
 
   const handleAddTask = (title: string) => {
     const newTask: Task = {
       id: `task-${Date.now()}`,
       title,
       status: 'TODO',
-      priority: 'MEDIUM',  // Default to medium (Ambar)
+      priority: 'MEDIUM',
       tags: [],
       createdAt: new Date(),
       updatedAt: new Date(),
     };
 
     addTask(newTask);
+  };
+
+  const handlePlay = () => {
+    if (isPaused) {
+      resumeTimer();
+    } else if (!isActive) {
+      const { duration } = useTimerStore.getState();
+      startTimer(duration);
+    }
   };
 
   return (
@@ -93,6 +142,27 @@ export const InboxView: React.FC = () => {
         onUpdate={updateTask}
         onComplete={toggleTaskComplete}
         onDelete={deleteTask}
+      />
+
+      <TimerWidget
+        timeRemaining={timeRemaining}
+        progress={progress}
+        isActive={isActive}
+        isPaused={isPaused}
+        onExpand={toggleFocusMode}
+      />
+
+      <FocusMode
+        isOpen={isInFocusMode}
+        timeRemaining={timeRemaining}
+        taskTitle={activeTaskTitle || ''}
+        isActive={isActive}
+        isPaused={isPaused}
+        isCompleted={isCompleted}
+        onClose={toggleFocusMode}
+        onPlay={handlePlay}
+        onPause={pauseTimer}
+        onReset={resetTimer}
       />
     </PageContainer>
   );

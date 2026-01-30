@@ -1,12 +1,14 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
-import { Check } from 'lucide-react';
+import { Check, Clock } from 'lucide-react';
+import { useTimerStore } from '@/store/useTimerStore';
+import { formatDuration } from '@/utils/timeUtils';
 import type { Task, TaskPriority } from '@/types';
 
 interface TaskCardProps {
-    task: Task;
-    onToggle: (id: string) => void;
-    onClick?: (task: Task) => void;
+  task: Task;
+  onToggle: (id: string) => void;
+  onClick?: (task: Task) => void;
 }
 
 const Card = styled.div<{ $completed: boolean }>`
@@ -27,8 +29,8 @@ const Card = styled.div<{ $completed: boolean }>`
   }
 
   ${({ $completed, theme }) =>
-        $completed &&
-        css`
+    $completed &&
+    css`
       opacity: 0.7;
     `}
 `;
@@ -41,17 +43,17 @@ const PriorityIndicator = styled.div<{ $priority: TaskPriority }>`
   width: 4px;
   border-radius: 8px 0 0 8px;
   background-color: ${({ $priority, theme }) => {
-        switch ($priority) {
-            case 'HIGH':
-            case 'URGENT':
-                return theme.colors.rojoCarmesi;
-            case 'MEDIUM':
-                return theme.colors.ambar;
-            case 'LOW':
-            default:
-                return theme.colors.azulKairos;
-        }
-    }};
+    switch ($priority) {
+      case 'HIGH':
+      case 'URGENT':
+        return theme.colors.rojoCarmesi;
+      case 'MEDIUM':
+        return theme.colors.ambar;
+      case 'LOW':
+      default:
+        return theme.colors.azulKairos;
+    }
+  }};
 `;
 
 const Checkbox = styled.button<{ $checked: boolean }>`
@@ -60,9 +62,9 @@ const Checkbox = styled.button<{ $checked: boolean }>`
   height: 24px;
   border-radius: 50%;
   border: 2px solid ${({ theme, $checked }) =>
-        $checked ? theme.colors.verdeEsmeralda : theme.colors.border};
+    $checked ? theme.colors.verdeEsmeralda : theme.colors.border};
   background: ${({ theme, $checked }) =>
-        $checked ? theme.colors.verdeEsmeralda : 'transparent'};
+    $checked ? theme.colors.verdeEsmeralda : 'transparent'};
   cursor: pointer;
   transition: all ${({ theme }) => theme.transitions.fast};
   display: flex;
@@ -90,37 +92,54 @@ const TaskTitle = styled.p<{ $completed: boolean }>`
   margin: 0;
   font-size: ${({ theme }) => theme.fontSize.base};
   color: ${({ theme, $completed }) =>
-        $completed ? theme.colors.slateGray : theme.colors.text};
+    $completed ? theme.colors.slateGray : theme.colors.text};
   text-decoration: ${({ $completed }) => ($completed ? 'line-through' : 'none')};
   transition: all ${({ theme }) => theme.transitions.base};
   word-break: break-word;
 `;
 
+const TimeIndicator = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing.xs};
+  font-size: ${({ theme }) => theme.fontSize.xs};
+  color: ${({ theme }) => theme.colors.slateGray};
+  margin-top: ${({ theme }) => theme.spacing.xs};
+`;
+
 export const TaskCard: React.FC<TaskCardProps> = ({ task, onToggle, onClick }) => {
-    const isCompleted = task.status === 'DONE';
+  const isCompleted = task.status === 'DONE';
+  const { timeSpent } = useTimerStore();
+  const taskTimeSpent = timeSpent[task.id] || 0;
 
-    const handleCheckboxClick = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        onToggle(task.id);
-    };
+  const handleCheckboxClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onToggle(task.id);
+  };
 
-    const handleCardClick = () => {
-        onClick?.(task);
-    };
+  const handleCardClick = () => {
+    onClick?.(task);
+  };
 
-    return (
-        <Card $completed={isCompleted} onClick={handleCardClick} className="animate-fade-up">
-            <PriorityIndicator $priority={task.priority} />
-            <Checkbox
-                $checked={isCompleted}
-                onClick={handleCheckboxClick}
-                aria-label={isCompleted ? 'Mark as incomplete' : 'Mark as complete'}
-            >
-                <Check size={16} />
-            </Checkbox>
-            <TaskContent>
-                <TaskTitle $completed={isCompleted}>{task.title}</TaskTitle>
-            </TaskContent>
-        </Card>
-    );
+  return (
+    <Card $completed={isCompleted} onClick={handleCardClick} className="animate-fade-up">
+      <PriorityIndicator $priority={task.priority} />
+      <Checkbox
+        $checked={isCompleted}
+        onClick={handleCheckboxClick}
+        aria-label={isCompleted ? 'Mark as incomplete' : 'Mark as complete'}
+      >
+        <Check size={16} />
+      </Checkbox>
+      <TaskContent>
+        <TaskTitle $completed={isCompleted}>{task.title}</TaskTitle>
+        {taskTimeSpent > 0 && (
+          <TimeIndicator>
+            <Clock size={12} />
+            {formatDuration(taskTimeSpent)}
+          </TimeIndicator>
+        )}
+      </TaskContent>
+    </Card>
+  );
 };

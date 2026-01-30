@@ -24,14 +24,10 @@ const Container = styled.div`
 `;
 
 const Title = styled.h3`
-  font-size: ${({ theme }) => theme.fontSize.lg};
-  color: ${({ theme }) => theme.colors.charcoal};
+  font-size: ${({ theme }) => theme.typography.sizes.lg};
+  color: ${({ theme }) => theme.colors.kairosCharcoal};
   margin: 0 0 16px 0;
   font-weight: 600;
-`;
-
-const Content = styled.div`
-  flex: 1;
 `;
 
 const List = styled.ul`
@@ -48,7 +44,7 @@ const Item = styled.li`
   align-items: center;
   gap: 12px;
   padding: 12px;
-  background: ${({ theme }) => theme.colors.offWhite};
+  background: ${({ theme }) => theme.colors.kairosOffWhite};
   border-radius: 8px;
   transition: transform 0.2s ease;
 
@@ -61,7 +57,7 @@ const CheckCircle = styled.div`
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: ${({ theme }) => theme.colors.verdeEsmeralda};
+  background: ${({ theme }) => theme.colors.kairosVerdeEsmeralda};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -69,14 +65,18 @@ const CheckCircle = styled.div`
   flex-shrink: 0;
 `;
 
+const Content = styled.div`
+  flex: 1;
+`;
+
 const AchievementTitle = styled.div`
   font-weight: 500;
-  color: ${({ theme }) => theme.colors.charcoal};
+  color: ${({ theme }) => theme.colors.kairosCharcoal};
 `;
 
 const AchievementMeta = styled.div`
-  font-size: ${({ theme }) => theme.fontSize.xs};
-  color: ${({ theme }) => theme.colors.slateGray};
+  font-size: ${({ theme }) => theme.typography.sizes.xs};
+  color: ${({ theme }) => theme.colors.kairosSlateGray};
   display: flex;
   gap: 8px;
 `;

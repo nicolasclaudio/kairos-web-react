@@ -20,22 +20,22 @@ const Card = styled.div`
 `;
 
 const Value = styled.div`
-  font-size: ${({ theme }) => theme.fontSize['3xl']};
+  font-size: ${({ theme }) => theme.typography.sizes['3xl']};
   font-weight: 700;
-  color: ${({ theme }) => theme.colors.azulKairos};
+  color: ${({ theme }) => theme.colors.kairosAzul};
   line-height: 1;
 `;
 
 const Label = styled.div`
-  font-size: ${({ theme }) => theme.fontSize.sm};
-  color: ${({ theme }) => theme.colors.slateGray};
+  font-size: ${({ theme }) => theme.typography.sizes.sm};
+  color: ${({ theme }) => theme.colors.kairosSlateGray};
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 `;
 
 const Subtext = styled.div`
-  font-size: ${({ theme }) => theme.fontSize.xs};
+  font-size: ${({ theme }) => theme.typography.sizes.xs};
   color: ${({ theme }) => theme.colors.textTertiary};
   margin-top: 4px;
 `;

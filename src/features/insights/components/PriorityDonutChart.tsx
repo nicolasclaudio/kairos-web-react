@@ -20,8 +20,8 @@ const Container = styled.div`
 `;
 
 const Title = styled.h3`
-  font-size: ${({ theme }) => theme.fontSize.lg};
-  color: ${({ theme }) => theme.colors.charcoal};
+  font-size: ${({ theme }) => theme.typography.sizes.lg};
+  color: ${({ theme }) => theme.colors.kairosCharcoal};
   margin: 0 0 16px 0;
   font-weight: 600;
 `;

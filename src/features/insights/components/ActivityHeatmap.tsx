@@ -59,12 +59,12 @@ const Cell = styled.div<cellprops>`
   border-radius: 2px;
   background-color: ${({ theme, $intensity }) => {
     switch ($intensity) {
-      case 0: return theme.colors.offWhite || '#F8FAFC';
+      case 0: return theme.colors.kairosOffWhite || '#F8FAFC';
       case 1: return '#BFDBFE'; // Light Blue
       case 2: return '#60A5FA'; // Medium Blue
       case 3: return '#2563EB'; // Strong Blue
-      case 4: return theme.colors.azulKairos || '#0052FF'; // Kairos Blue
-      default: return theme.colors.offWhite;
+      case 4: return theme.colors.kairosAzul || '#0052FF'; // Kairos Blue
+      default: return theme.colors.kairosOffWhite;
     }
   }};
   border: 1px solid ${({ theme, $intensity }) =>
@@ -85,7 +85,7 @@ const Legend = styled.div`
   justify-content: flex-end;
   gap: 8px;
   margin-top: 12px;
-  font-size: ${({ theme }) => theme.fontSize.xs};
+  font-size: ${({ theme }) => theme.typography.sizes.xs};
   color: ${({ theme }) => theme.colors.textSecondary};
 `;
 

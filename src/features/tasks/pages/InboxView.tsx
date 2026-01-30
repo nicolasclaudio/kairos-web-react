@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { format } from 'date-fns';
 import { QuickAddInput } from '../components/QuickAddInput';
 import { TaskList } from '../components/TaskList';
+import { TaskDrawer } from '../components/TaskDrawer';
 import { useTasksStore } from '@/store/useTasksStore';
 import type { Task } from '@/types';
 
@@ -39,48 +40,60 @@ const Subtitle = styled.p`
 `;
 
 export const InboxView: React.FC = () => {
-    const { tasks, addTask, toggleTaskComplete } = useTasksStore();
-    const today = format(new Date(), 'EEEE, MMMM d, yyyy');
+  const {
+    tasks,
+    selectedTaskId,
+    isDrawerOpen,
+    addTask,
+    updateTask,
+    toggleTaskComplete,
+    deleteTask,
+    openDrawer,
+    closeDrawer,
+  } = useTasksStore();
 
-    const handleAddTask = (title: string) => {
-        const newTask: Task = {
-            id: `task-${Date.now()}`,
-            title,
-            status: 'TODO',
-            priority: 'MEDIUM',  // Default to medium (Ambar)
-            tags: [],
-            createdAt: new Date(),
-            updatedAt: new Date(),
-        };
+  const today = format(new Date(), 'EEEE, MMMM d, yyyy');
+  const selectedTask = tasks.find(t => t.id === selectedTaskId) || null;
 
-        addTask(newTask);
+  const handleAddTask = (title: string) => {
+    const newTask: Task = {
+      id: `task-${Date.now()}`,
+      title,
+      status: 'TODO',
+      priority: 'MEDIUM',  // Default to medium (Ambar)
+      tags: [],
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
 
-    const handleToggleTask = (id: string) => {
-        toggleTaskComplete(id);
-    };
+    addTask(newTask);
+  };
 
-    const handleTaskClick = (task: Task) => {
-        // TODO: Open task details modal
-        console.log('Task clicked:', task);
-    };
+  return (
+    <PageContainer>
+      <ContentWrapper>
+        <Header>
+          <Title>Kairos / Inbox</Title>
+          <Subtitle>{today}</Subtitle>
+        </Header>
 
-    return (
-        <PageContainer>
-            <ContentWrapper>
-                <Header>
-                    <Title>Kairos / Inbox</Title>
-                    <Subtitle>{today}</Subtitle>
-                </Header>
+        <QuickAddInput onAdd={handleAddTask} />
 
-                <QuickAddInput onAdd={handleAddTask} />
+        <TaskList
+          tasks={tasks}
+          onToggle={toggleTaskComplete}
+          onTaskClick={(task) => openDrawer(task.id)}
+        />
+      </ContentWrapper>
 
-                <TaskList
-                    tasks={tasks}
-                    onToggle={handleToggleTask}
-                    onTaskClick={handleTaskClick}
-                />
-            </ContentWrapper>
-        </PageContainer>
-    );
+      <TaskDrawer
+        task={selectedTask}
+        isOpen={isDrawerOpen}
+        onClose={closeDrawer}
+        onUpdate={updateTask}
+        onComplete={toggleTaskComplete}
+        onDelete={deleteTask}
+      />
+    </PageContainer>
+  );
 };

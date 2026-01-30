@@ -6,6 +6,8 @@ interface TasksState {
     tasks: Task[];
     isLoading: boolean;
     error: string | null;
+    selectedTaskId: string | null;
+    isDrawerOpen: boolean;
 
     // Actions
     setTasks: (tasks: Task[]) => void;
@@ -13,6 +15,8 @@ interface TasksState {
     updateTask: (id: string, updates: Partial<Task>) => void;
     deleteTask: (id: string) => void;
     toggleTaskComplete: (id: string) => void;
+    openDrawer: (taskId: string) => void;
+    closeDrawer: () => void;
 }
 
 export const useTasksStore = create<TasksState>()(
@@ -22,6 +26,8 @@ export const useTasksStore = create<TasksState>()(
                 tasks: [],
                 isLoading: false,
                 error: null,
+                selectedTaskId: null,
+                isDrawerOpen: false,
 
                 setTasks: (tasks) => set({ tasks }),
 
@@ -31,12 +37,14 @@ export const useTasksStore = create<TasksState>()(
 
                 updateTask: (id, updates) => set((state) => ({
                     tasks: state.tasks.map(task =>
-                        task.id === id ? { ...task, ...updates } : task
+                        task.id === id ? { ...task, ...updates, updatedAt: new Date() } : task
                     )
                 })),
 
                 deleteTask: (id) => set((state) => ({
-                    tasks: state.tasks.filter(task => task.id !== id)
+                    tasks: state.tasks.filter(task => task.id !== id),
+                    selectedTaskId: state.selectedTaskId === id ? null : state.selectedTaskId,
+                    isDrawerOpen: state.selectedTaskId === id ? false : state.isDrawerOpen,
                 })),
 
                 toggleTaskComplete: (id) => set((state) => ({
@@ -45,11 +53,15 @@ export const useTasksStore = create<TasksState>()(
                             ? {
                                 ...task,
                                 status: task.status === 'DONE' ? 'TODO' : 'DONE',
-                                completedAt: task.status === 'DONE' ? undefined : new Date()
+                                completedAt: task.status === 'DONE' ? undefined : new Date(),
+                                updatedAt: new Date()
                             }
                             : task
                     )
                 })),
+
+                openDrawer: (taskId) => set({ selectedTaskId: taskId, isDrawerOpen: true }),
+                closeDrawer: () => set({ isDrawerOpen: false }),
             }),
             { name: 'kairos-tasks-storage' }
         )

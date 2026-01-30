@@ -165,6 +165,32 @@ export const GlobalStyles = createGlobalStyle`
     animation: fadeUp 0.3s ease-out;
   }
 
+  @keyframes slideInRight {
+    from {
+      transform: translateX(100%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slideOutRight {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(100%);
+    }
+  }
+
+  .animate-slide-in-right {
+    animation: slideInRight 0.3s ease-out;
+  }
+
+  .animate-slide-out-right {
+    animation: slideOutRight 0.3s ease-in;
+  }
+
   /* Utility classes */
   .container {
     max-width: 1280px;

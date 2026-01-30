@@ -1,3 +1,4 @@
-// Re-export common components
+// Export all common components
 export { Button } from './Button';
 export { Input } from './Input';
+export { Overlay } from './Overlay';

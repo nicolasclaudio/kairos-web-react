@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { QuickAddInput } from '../common/QuickAddInput';
 import { TaskList } from './TaskList';
-import { useTaskStore } from '../../stores/taskStore';
+import { useTasksStore } from '@/store/useTasksStore';
 
 const Container = styled.div`
   min-height: 100vh;
@@ -59,58 +59,53 @@ const LoadingSpinner = styled.div`
 `;
 
 export const InboxView: React.FC = () => {
-    const {
-        tasks,
-        isLoading,
-        error,
-        fetchTasks,
-        addTask,
-        toggleTask
-    } = useTaskStore();
+  const {
+    tasks,
+    isLoading,
+    error,
+    addTask,
+    toggleTask
+  } = useTasksStore();
 
-    useEffect(() => {
-        fetchTasks();
-    }, [fetchTasks]);
-
-    const getCurrentDate = () => {
-        const now = new Date();
-        const options: Intl.DateTimeFormatOptions = {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        };
-        return now.toLocaleDateString('es-ES', options);
+  const getCurrentDate = () => {
+    const now = new Date();
+    const options: Intl.DateTimeFormatOptions = {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
     };
+    return now.toLocaleDateString('es-ES', options);
+  };
 
-    return (
-        <Container>
-            <Content>
-                <Header>
-                    <Title>Kairos / Inbox</Title>
-                    <Subtitle>{getCurrentDate()}</Subtitle>
-                </Header>
+  return (
+    <Container>
+      <Content>
+        <Header>
+          <Title>Kairos / Inbox</Title>
+          <Subtitle>{getCurrentDate()}</Subtitle>
+        </Header>
 
-                {error && (
-                    <ErrorMessage>
-                        {error}
-                    </ErrorMessage>
-                )}
+        {error && (
+          <ErrorMessage>
+            {error}
+          </ErrorMessage>
+        )}
 
-                <QuickAddInput
-                    onAdd={addTask}
-                    isLoading={isLoading}
-                />
+        <QuickAddInput
+          onAdd={addTask}
+          isLoading={isLoading}
+        />
 
-                {isLoading && tasks.length === 0 ? (
-                    <LoadingSpinner>Cargando tareas...</LoadingSpinner>
-                ) : (
-                    <TaskList
-                        tasks={tasks}
-                        onToggle={toggleTask}
-                    />
-                )}
-            </Content>
-        </Container>
-    );
+        {isLoading && tasks.length === 0 ? (
+          <LoadingSpinner>Cargando tareas...</LoadingSpinner>
+        ) : (
+          <TaskList
+            tasks={tasks}
+            onToggle={toggleTask}
+          />
+        )}
+      </Content>
+    </Container>
+  );
 };

@@ -2,6 +2,7 @@ import React from 'react';
 import styled, { keyframes } from 'styled-components';
 import { Check } from 'lucide-react';
 import type { Task, TaskPriority } from '../../types';
+import { useGoalStore } from '../../stores/useGoalStore';
 
 interface TaskCardProps {
   task: Task;
@@ -131,10 +132,25 @@ const MetaScore = styled.span<{ $score: number }>`
       $score >= 5 ? '#F59E0B' :
         '#0052FF'
   };
+  };
+`;
+
+const GoalPill = styled.span`
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: ${({ theme }) => theme.typography.sizes.xs};
+  color: ${({ theme }) => theme.colors.kairosSlateGray};
+  background: ${({ theme }) => theme.colors.kairosOffWhite};
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid ${({ theme }) => theme.colors.border};
 `;
 
 export const TaskCard: React.FC<TaskCardProps> = ({ task, onToggle }) => {
   const isCompleted = task.status === 'DONE';
+  const { getGoal } = useGoalStore();
+  const goal = task.goalId ? getGoal(task.goalId) : undefined;
 
   return (
     <Card
@@ -160,6 +176,12 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onToggle }) => {
       <TaskText $completed={isCompleted}>
         {task.title}
       </TaskText>
+
+      {goal && (
+        <GoalPill title={goal.title}>
+          {goal.icon} {goal.title}
+        </GoalPill>
+      )}
 
       <MetaInfo>
         {task.metaScore !== undefined && (

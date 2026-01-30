@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
-import { format, subDays, eachDayOfInterval, isSameDay, startOfWeek, endOfWeek } from 'date-fns';
+import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { generateHeatmapData } from '../../../utils/analyticsUtils';
 import type { Task } from '../../../types';
@@ -19,7 +19,7 @@ const Container = styled.div`
 
 const Title = styled.h3`
   font-size: ${({ theme }) => theme.fontSize.lg};
-  color: ${({ theme }) => theme.colors.charcoal};
+  color: ${({ theme }) => theme.colors.text};
   margin: 0 0 16px 0;
   font-weight: 600;
 `;

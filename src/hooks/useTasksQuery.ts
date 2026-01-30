@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { tasksService } from '@/services/tasks.service';
 import { queryKeys } from '@/lib/react-query';
-import type { Task, CreateTaskDTO, UpdateTaskDTO, TaskFilters } from '@/types';
+import type { CreateTaskDTO, UpdateTaskDTO, TaskFilters } from '@/types';
 
 /**
  * Hook para obtener todas las tareas con filtros

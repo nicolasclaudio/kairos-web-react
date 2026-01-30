@@ -5,16 +5,16 @@ import { SessionControls } from './SessionControls';
 import { formatTime } from '@/utils/timeUtils';
 
 interface FocusModeProps {
-    isOpen: boolean;
-    timeRemaining: number;
-    taskTitle: string;
-    isActive: boolean;
-    isPaused: boolean;
-    isCompleted: boolean;
-    onClose: () => void;
-    onPlay: () => void;
-    onPause: () => void;
-    onReset: () => void;
+  isOpen: boolean;
+  timeRemaining: number;
+  taskTitle: string;
+  isActive: boolean;
+  isPaused: boolean;
+  isCompleted: boolean;
+  onClose: () => void;
+  onPlay: () => void;
+  onPause: () => void;
+  onReset: () => void;
 }
 
 const flash = keyframes`
@@ -50,17 +50,17 @@ const Container = styled.div<{ $isActive: boolean; $isPaused: boolean; $isComple
   gap: ${({ theme }) => theme.spacing['2xl']};
   
   ${({ $isActive, $isPaused, $isCompleted }) =>
-        $isActive &&
-        !$isPaused &&
-        !$isCompleted &&
-        `
+    $isActive &&
+    !$isPaused &&
+    !$isCompleted &&
+    `
     box-shadow: inset 0 0 60px rgba(0, 82, 255, 0.15);
     border-radius: 20px;
   `}
   
   ${({ $isCompleted }) =>
-        $isCompleted &&
-        `
+    $isCompleted &&
+    `
     animation: ${flash} 1s ease-in-out 3;
   `}
 `;
@@ -91,11 +91,11 @@ const Clock = styled.div<{ $isPaused: boolean; $isCompleted: boolean }>`
   font-size: 120px;
   font-weight: ${({ theme }) => theme.fontWeight.bold};
   color: ${({ theme, $isPaused, $isCompleted }) =>
-        $isCompleted
-            ? theme.colors.verdeEsmeralda
-            : $isPaused
-                ? theme.colors.ambar
-                : theme.colors.charcoal};
+    $isCompleted
+      ? theme.colors.success
+      : $isPaused
+        ? theme.colors.warning
+        : theme.colors.text};
   line-height: 1;
   font-variant-numeric: tabular-nums;
   transition: color ${({ theme }) => theme.transitions.base};
@@ -109,7 +109,7 @@ const Clock = styled.div<{ $isPaused: boolean; $isCompleted: boolean }>`
 const TaskTitle = styled.h2`
   font-size: ${({ theme }) => theme.fontSize['2xl']};
   font-weight: ${({ theme }) => theme.fontWeight.medium};
-  color: ${({ theme }) => theme.colors.slateGray};
+  color: ${({ theme }) => theme.colors.textSecondary};
   text-align: center;
   margin: 0;
   max-width: 600px;
@@ -121,81 +121,81 @@ const TaskTitle = styled.h2`
 
 const CompletionMessage = styled.div`
   font-size: ${({ theme }) => theme.fontSize.xl};
-  color: ${({ theme }) => theme.colors.verdeEsmeralda};
+  color: ${({ theme }) => theme.colors.success};
   font-weight: ${({ theme }) => theme.fontWeight.semibold};
   text-align: center;
 `;
 
 export const FocusMode: React.FC<FocusModeProps> = ({
-    isOpen,
-    timeRemaining,
-    taskTitle,
-    isActive,
-    isPaused,
-    isCompleted,
-    onClose,
-    onPlay,
-    onPause,
-    onReset,
+  isOpen,
+  timeRemaining,
+  taskTitle,
+  isActive,
+  isPaused,
+  isCompleted,
+  onClose,
+  onPlay,
+  onPause,
+  onReset,
 }) => {
-    // Handle keyboard shortcuts
-    useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (!isOpen) return;
+  // Handle keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!isOpen) return;
 
-            if (e.key === 'Escape') {
-                if (isActive && !confirm('Exit focus mode? Your timer will continue in the background.')) {
-                    return;
-                }
-                onClose();
-            } else if (e.key === ' ') {
-                e.preventDefault();
-                if (isPaused) {
-                    onPlay();
-                } else {
-                    onPause();
-                }
-            } else if (e.key === 'r' || e.key === 'R') {
-                onReset();
-            }
-        };
+      if (e.key === 'Escape') {
+        if (isActive && !confirm('Exit focus mode? Your timer will continue in the background.')) {
+          return;
+        }
+        onClose();
+      } else if (e.key === ' ') {
+        e.preventDefault();
+        if (isPaused) {
+          onPlay();
+        } else {
+          onPause();
+        }
+      } else if (e.key === 'r' || e.key === 'R') {
+        onReset();
+      }
+    };
 
-        document.addEventListener('keydown', handleKeyDown);
-        return () => document.removeEventListener('keydown', handleKeyDown);
-    }, [isOpen, isActive, isPaused, onClose, onPlay, onPause, onReset]);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, isActive, isPaused, onClose, onPlay, onPause, onReset]);
 
-    return (
-        <Overlay $isOpen={isOpen} onClick={onClose}>
-            <Container
-                $isActive={isActive}
-                $isPaused={isPaused}
-                $isCompleted={isCompleted}
-                onClick={(e) => e.stopPropagation()}
-            >
-                <CloseButton onClick={onClose} aria-label="Close focus mode">
-                    <X size={24} />
-                </CloseButton>
+  return (
+    <Overlay $isOpen={isOpen} onClick={onClose}>
+      <Container
+        $isActive={isActive}
+        $isPaused={isPaused}
+        $isCompleted={isCompleted}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <CloseButton onClick={onClose} aria-label="Close focus mode">
+          <X size={24} />
+        </CloseButton>
 
-                <Clock $isPaused={isPaused} $isCompleted={isCompleted}>
-                    {formatTime(timeRemaining)}
-                </Clock>
+        <Clock $isPaused={isPaused} $isCompleted={isCompleted}>
+          {formatTime(timeRemaining)}
+        </Clock>
 
-                <TaskTitle>{taskTitle}</TaskTitle>
+        <TaskTitle>{taskTitle}</TaskTitle>
 
-                {isCompleted && (
-                    <CompletionMessage>
-                        🎉 Session Complete!
-                    </CompletionMessage>
-                )}
+        {isCompleted && (
+          <CompletionMessage>
+            🎉 Session Complete!
+          </CompletionMessage>
+        )}
 
-                <SessionControls
-                    isActive={isActive}
-                    isPaused={isPaused}
-                    onPlay={onPlay}
-                    onPause={onPause}
-                    onReset={onReset}
-                />
-            </Container>
-        </Overlay>
-    );
+        <SessionControls
+          isActive={isActive}
+          isPaused={isPaused}
+          onPlay={onPlay}
+          onPause={onPause}
+          onReset={onReset}
+        />
+      </Container>
+    </Overlay>
+  );
 };

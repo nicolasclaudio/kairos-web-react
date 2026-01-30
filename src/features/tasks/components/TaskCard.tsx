@@ -4,6 +4,7 @@ import { Check, Clock } from 'lucide-react';
 import { useTimerStore } from '@/store/useTimerStore';
 import { formatDuration } from '@/utils/timeUtils';
 import type { Task, TaskPriority } from '@/types';
+import { useGoalStore } from '../../../stores/useGoalStore';
 
 interface TaskCardProps {
   task: Task;
@@ -28,7 +29,7 @@ const Card = styled.div<{ $completed: boolean }>`
     transform: translateY(-2px);
   }
 
-  ${({ $completed, theme }) =>
+  ${({ $completed }) =>
     $completed &&
     css`
       opacity: 0.7;
@@ -46,12 +47,12 @@ const PriorityIndicator = styled.div<{ $priority: TaskPriority }>`
     switch ($priority) {
       case 'HIGH':
       case 'URGENT':
-        return theme.colors.rojoCarmesi;
+        return theme.colors.danger;
       case 'MEDIUM':
-        return theme.colors.ambar;
+        return theme.colors.warning;
       case 'LOW':
       default:
-        return theme.colors.azulKairos;
+        return theme.colors.primary;
     }
   }};
 `;
@@ -62,9 +63,9 @@ const Checkbox = styled.button<{ $checked: boolean }>`
   height: 24px;
   border-radius: 50%;
   border: 2px solid ${({ theme, $checked }) =>
-    $checked ? theme.colors.verdeEsmeralda : theme.colors.border};
+    $checked ? theme.colors.success : theme.colors.border};
   background: ${({ theme, $checked }) =>
-    $checked ? theme.colors.verdeEsmeralda : 'transparent'};
+    $checked ? theme.colors.success : 'transparent'};
   cursor: pointer;
   transition: all ${({ theme }) => theme.transitions.fast};
   display: flex;
@@ -73,7 +74,7 @@ const Checkbox = styled.button<{ $checked: boolean }>`
   padding: 0;
 
   &:hover {
-    border-color: ${({ theme }) => theme.colors.verdeEsmeralda};
+    border-color: ${({ theme }) => theme.colors.success};
   }
 
   svg {
@@ -92,7 +93,7 @@ const TaskTitle = styled.p<{ $completed: boolean }>`
   margin: 0;
   font-size: ${({ theme }) => theme.fontSize.base};
   color: ${({ theme, $completed }) =>
-    $completed ? theme.colors.slateGray : theme.colors.text};
+    $completed ? theme.colors.textSecondary : theme.colors.text};
   text-decoration: ${({ $completed }) => ($completed ? 'line-through' : 'none')};
   transition: all ${({ theme }) => theme.transitions.base};
   word-break: break-word;
@@ -103,14 +104,30 @@ const TimeIndicator = styled.div`
   align-items: center;
   gap: ${({ theme }) => theme.spacing.xs};
   font-size: ${({ theme }) => theme.fontSize.xs};
-  color: ${({ theme }) => theme.colors.slateGray};
+  color: ${({ theme }) => theme.colors.textSecondary};
   margin-top: ${({ theme }) => theme.spacing.xs};
+`;
+
+const GoalPill = styled.span`
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: ${({ theme }) => theme.fontSize.xs};
+  color: ${({ theme }) => theme.colors.textSecondary};
+  background: ${({ theme }) => theme.colors.backgroundSecondary};
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  margin-top: 4px;
 `;
 
 export const TaskCard: React.FC<TaskCardProps> = ({ task, onToggle, onClick }) => {
   const isCompleted = task.status === 'DONE';
   const { timeSpent } = useTimerStore();
+  const { getGoal } = useGoalStore();
   const taskTimeSpent = timeSpent[task.id] || 0;
+
+  const goal = task.goalId ? getGoal(task.goalId) : undefined;
 
   const handleCheckboxClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -133,6 +150,13 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onToggle, onClick }) =
       </Checkbox>
       <TaskContent>
         <TaskTitle $completed={isCompleted}>{task.title}</TaskTitle>
+
+        {goal && (
+          <GoalPill title={goal.title}>
+            {goal.icon} {goal.title}
+          </GoalPill>
+        )}
+
         {taskTimeSpent > 0 && (
           <TimeIndicator>
             <Clock size={12} />

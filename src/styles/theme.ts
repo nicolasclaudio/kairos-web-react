@@ -16,13 +16,13 @@ export const lightTheme = {
         info: '#3b82f6',
 
         // Kairos Brand Colors
-        offWhite: '#F8FAFC',
-        charcoal: '#1E293B',
-        slateGray: '#64748B',
-        azulKairos: '#0052FF',
-        rojoCarmesi: '#DC2626',
-        ambar: '#F59E0B',
-        verdeEsmeralda: '#10B981',
+        kairosOffWhite: '#F8FAFC',
+        kairosCharcoal: '#1E293B',
+        kairosAzul: '#0052FF',
+        kairosRojoCarmesi: '#DC2626',
+        kairosAmbar: '#F59E0B',
+        kairosVerdeEsmeralda: '#10B981',
+        kairosSlateGray: '#64748B',
 
         // Background colors (using Kairos palette)
         background: '#F8FAFC',  // Off-White
@@ -39,11 +39,12 @@ export const lightTheme = {
         border: '#e5e7eb',
         borderHover: '#d1d5db',
 
-        // Priority colors (Kairos specific)
-        priorityLow: '#0052FF',  // Azul Kairos
-        priorityMedium: '#F59E0B',  // Ambar
-        priorityHigh: '#DC2626',  // Rojo Carmesí
-        priorityUrgent: '#DC2626',  // Rojo Carmesí
+        // Task Priority Colors (for card left border)
+        priorityHigh: '#DC2626',
+        priorityMedium: '#F59E0B',
+        priorityLow: '#0052FF',
+        priorityUrgent: '#DC2626',
+
     },
 
     spacing: {
@@ -97,7 +98,22 @@ export const lightTheme = {
     transitions: {
         fast: '150ms ease-in-out',
         base: '300ms ease-in-out',
+        normal: '300ms ease-in-out',
         slow: '500ms ease-in-out',
+    },
+
+    typography: {
+        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+        sizes: {
+            xs: '0.75rem',     // 12px
+            sm: '0.875rem',    // 14px
+            md: '1rem',        // 16px
+            lg: '1.125rem',    // 18px
+            xl: '1.25rem',     // 20px
+            '2xl': '1.5rem',   // 24px
+            '3xl': '1.875rem', // 30px
+            '4xl': '2.25rem',  // 36px
+        },
     },
 
     breakpoints: {

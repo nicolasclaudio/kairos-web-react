@@ -1,6 +1,7 @@
 import React from 'react';
 import styled, { ThemeProvider } from 'styled-components';
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { queryClient } from './lib/react-query';
@@ -8,32 +9,28 @@ import { lightTheme } from './styles/theme';
 import { GlobalStyles } from './styles/GlobalStyles';
 import { InboxView } from './components/inbox/InboxView';
 import { InsightsView } from './features/insights/pages/InsightsView';
-import { Sidebar } from './components/layout/Sidebar';
-
-const AppLayout = styled.div`
-  display: flex;
-  min-height: 100vh;
-`;
-
-const MainContent = styled.main`
-  flex: 1;
-  margin-left: 80px; // Sidebar width
-  background: ${({ theme }) => theme.colors.background};
-`;
+import { LoginPage } from './features/auth/pages/LoginPage';
+import { RegisterPage } from './features/auth/pages/RegisterPage';
+import { ProtectedRoute } from './features/auth/layout/ProtectedRoute';
+import { DashboardLayout } from './components/layout/DashboardLayout';
 
 const AppRoutes = () => {
-    const location = useLocation();
-
     return (
-        <AppLayout>
-            <Sidebar />
-            <MainContent>
-                <Routes location={location} key={location.pathname}>
-                    <Route path="/" element={<InboxView />} />
-                    <Route path="/insights" element={<InsightsView />} />
-                </Routes>
-            </MainContent>
-        </AppLayout>
+        <Routes>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+
+            <Route element={
+                <ProtectedRoute>
+                    <DashboardLayout />
+                </ProtectedRoute>
+            }>
+                <Route path="/" element={<InboxView />} />
+                <Route path="/insights" element={<InsightsView />} />
+            </Route>
+
+            <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
     );
 };
 

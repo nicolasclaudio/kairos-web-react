@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useLocation, Link } from 'react-router-dom';
-import { Inbox, BarChart2, Clock, Settings } from 'lucide-react';
+import { Inbox, BarChart2, Clock, Settings, Home, Target } from 'lucide-react';
 
 const Container = styled.aside`
   width: 80px;
@@ -52,22 +52,26 @@ const NavItem = styled(Link) <{ $active: boolean }>`
 `;
 
 export const Sidebar: React.FC = () => {
-    const location = useLocation();
+  const location = useLocation();
 
-    return (
-        <Container>
-            <NavItem to="/" $active={location.pathname === '/'} title="Inbox">
-                <Inbox size={24} />
-            </NavItem>
+  return (
+    <Container>
+      <NavItem to="/" $active={location.pathname === '/'} title="Inbox">
+        <Home size={24} />
+      </NavItem>
 
-            <NavItem to="/insights" $active={location.pathname === '/insights'} title="Insights">
-                <BarChart2 size={24} />
-            </NavItem>
+      <NavItem to="/plan" $active={location.pathname === '/plan'} title="Plan Diario">
+        <Target size={24} />
+      </NavItem>
 
-            {/* Placeholders for future features */}
-            <NavItem to="/timer" $active={location.pathname === '/timer'} title="Timer">
-                <Clock size={24} />
-            </NavItem>
-        </Container>
-    );
+      <NavItem to="/insights" $active={location.pathname === '/insights'} title="Insights">
+        <BarChart2 size={24} />
+      </NavItem>
+
+      {/* Placeholders for future features */}
+      <NavItem to="/timer" $active={location.pathname === '/timer'} title="Timer">
+        <Clock size={24} />
+      </NavItem>
+    </Container>
+  );
 };

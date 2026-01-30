@@ -13,6 +13,7 @@ import { LoginPage } from './features/auth/pages/LoginPage';
 import { RegisterPage } from './features/auth/pages/RegisterPage';
 import { ProtectedRoute } from './features/auth/layout/ProtectedRoute';
 import { DashboardLayout } from './components/layout/DashboardLayout';
+import { PlanView } from './features/plan/pages/PlanView';
 
 const AppRoutes = () => {
     return (
@@ -27,6 +28,7 @@ const AppRoutes = () => {
             }>
                 <Route path="/" element={<InboxView />} />
                 <Route path="/insights" element={<InsightsView />} />
+                <Route path="/plan" element={<PlanView />} />
             </Route>
 
             <Route path="*" element={<Navigate to="/" replace />} />

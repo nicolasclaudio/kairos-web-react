@@ -36,3 +36,32 @@ export interface TimeRange {
     start: Date;
     end: Date;
 }
+
+// Insights Dashboard Types
+export interface MetricData {
+    tasksCompleted: number;
+    focusHours: number;
+    currentStreak: number;
+    weeklyAverage: number;
+}
+
+export interface HeatmapDay {
+    date: Date;
+    hours: number;
+    intensity: 0 | 1 | 2 | 3 | 4;
+}
+
+export interface PriorityStats {
+    HIGH: { count: number; hours: number; percentage: number };
+    MEDIUM: { count: number; hours: number; percentage: number };
+    LOW: { count: number; hours: number; percentage: number };
+}
+
+export interface Achievement {
+    taskId: string;
+    title: string;
+    timeSpent: number;
+    completedAt: Date;
+}
+
+export type TimeFilter = 'week' | 'month' | 'all';

@@ -1,24 +1,19 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { ThemeProvider } from 'styled-components';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { ThemeProvider } from './context/ThemeContext';
-import { GlobalStyles } from './styles/GlobalStyles';
 import { queryClient } from './lib/react-query';
-import { InboxView } from './features/tasks';
+import { lightTheme } from './styles/theme';
+import { GlobalStyles } from './styles/GlobalStyles';
+import { InboxView } from './components/inbox/InboxView';
 
 function App() {
     return (
         <QueryClientProvider client={queryClient}>
-            <ThemeProvider>
+            <ThemeProvider theme={lightTheme}>
                 <GlobalStyles />
-                <BrowserRouter>
-                    <Routes>
-                        <Route path="/" element={<InboxView />} />
-                    </Routes>
-                </BrowserRouter>
+                <InboxView />
+                <ReactQueryDevtools initialIsOpen={false} />
             </ThemeProvider>
-            <ReactQueryDevtools initialIsOpen={false} />
         </QueryClientProvider>
     );
 }

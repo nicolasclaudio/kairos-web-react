@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { X, Trash2, Check } from 'lucide-react';
+import { X, Trash2, Check, Clock } from 'lucide-react';
 import { PrioritySelector } from './PrioritySelector';
 import { TagInput } from './TagInput';
 import { Overlay } from '@/components/common/Overlay';
+import { useTimerStore } from '@/store/useTimerStore';
+import { minutesToSeconds } from '@/utils/timeUtils';
 import type { Task, TaskPriority } from '@/types';
 
 interface TaskDrawerProps {
-    task: Task | null;
-    isOpen: boolean;
-    onClose: () => void;
-    onUpdate: (id: string, updates: Partial<Task>) => void;
-    onComplete: (id: string) => void;
-    onDelete: (id: string) => void;
+  task: Task | null;
+  isOpen: boolean;
+  onClose: () => void;
+  onUpdate: (id: string, updates: Partial<Task>) => void;
+  onComplete: (id: string) => void;
+  onDelete: (id: string) => void;
 }
 
 const DrawerContainer = styled.div<{ $isOpen: boolean }>`
@@ -43,6 +45,32 @@ const Header = styled.div`
   padding: ${({ theme }) => theme.spacing.xl};
   border-bottom: 1px solid ${({ theme }) => theme.colors.border};
   gap: ${({ theme }) => theme.spacing.md};
+`;
+
+const HeaderActions = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing.sm};
+  align-items: center;
+`;
+
+const TimerButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: ${({ theme }) => theme.spacing.xs};
+  padding: ${({ theme }) => theme.spacing.sm} ${({ theme }) => theme.spacing.md};
+  background: ${({ theme }) => theme.colors.azulKairos};
+  color: white;
+  border: none;
+  border-radius: ${({ theme }) => theme.borderRadius.md};
+  font-size: ${({ theme }) => theme.fontSize.sm};
+  font-weight: ${({ theme }) => theme.fontWeight.medium};
+  cursor: pointer;
+  transition: all ${({ theme }) => theme.transitions.fast};
+
+  &:hover {
+    background: #0046db;
+  }
 `;
 
 const TitleInput = styled.input`
@@ -190,126 +218,140 @@ const DeleteButton = styled.button`
 `;
 
 export const TaskDrawer: React.FC<TaskDrawerProps> = ({
-    task,
-    isOpen,
-    onClose,
-    onUpdate,
-    onComplete,
-    onDelete,
+  task,
+  isOpen,
+  onClose,
+  onUpdate,
+  onComplete,
+  onDelete,
 }) => {
-    const [title, setTitle] = useState('');
-    const [description, setDescription] = useState('');
-    const [priority, setPriority] = useState<TaskPriority>('MEDIUM');
-    const [tags, setTags] = useState<string[]>([]);
-    const [dueDate, setDueDate] = useState('');
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [priority, setPriority] = useState<TaskPriority>('MEDIUM');
+  const [tags, setTags] = useState<string[]>([]);
+  const [dueDate, setDueDate] = useState('');
+  const { startSession } = useTimerStore();
 
-    // Update local state when task changes
-    useEffect(() => {
-        if (task) {
-            setTitle(task.title);
-            setDescription(task.description || '');
-            setPriority(task.priority);
-            setTags(task.tags || []);
-            setDueDate(task.dueDate ? new Date(task.dueDate).toISOString().split('T')[0] : '');
-        }
-    }, [task]);
+  // Update local state when task changes
+  useEffect(() => {
+    if (task) {
+      setTitle(task.title);
+      setDescription(task.description || '');
+      setPriority(task.priority);
+      setTags(task.tags || []);
+      setDueDate(task.dueDate ? new Date(task.dueDate).toISOString().split('T')[0] : '');
+    }
+  }, [task]);
 
-    // Auto-save changes with debounce
-    useEffect(() => {
-        if (!task) return;
+  // Auto-save changes with debounce
+  useEffect(() => {
+    if (!task) return;
 
-        const timeout = setTimeout(() => {
-            onUpdate(task.id, {
-                title,
-                description,
-                priority,
-                tags,
-                dueDate: dueDate ? new Date(dueDate) : undefined,
-            });
-        }, 500);
+    const timeout = setTimeout(() => {
+      onUpdate(task.id, {
+        title,
+        description,
+        priority,
+        tags,
+        dueDate: dueDate ? new Date(dueDate) : undefined,
+      });
+    }, 500);
 
-        return () => clearTimeout(timeout);
-    }, [title, description, priority, tags, dueDate, task, onUpdate]);
+    return () => clearTimeout(timeout);
+  }, [title, description, priority, tags, dueDate, task, onUpdate]);
 
-    const handleComplete = () => {
-        if (task) {
-            onComplete(task.id);
-            onClose();
-        }
-    };
+  const handleComplete = () => {
+    if (task) {
+      onComplete(task.id);
+      onClose();
+    }
+  };
 
-    const handleDelete = () => {
-        if (task && confirm('Are you sure you want to delete this task?')) {
-            onDelete(task.id);
-            onClose();
-        }
-    };
+  const handleDelete = () => {
+    if (task && confirm('Are you sure you want to delete this task?')) {
+      onDelete(task.id);
+      onClose();
+    }
+  };
 
-    const handleKeyDown = (e: React.KeyboardEvent) => {
-        if (e.key === 'Escape') {
-            onClose();
-        }
-    };
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      onClose();
+    }
+  };
 
-    if (!task) return null;
+  const handleStartTimer = () => {
+    if (task) {
+      startSession(task.id, task.title, minutesToSeconds(25));
+      onClose();
+    }
+  };
 
-    const isCompleted = task.status === 'DONE';
+  if (!task) return null;
 
-    return (
-        <>
-            <Overlay isVisible={isOpen} onClick={onClose} />
-            <DrawerContainer $isOpen={isOpen} onKeyDown={handleKeyDown}>
-                <Header>
-                    <TitleInput
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        placeholder="Task title..."
-                    />
-                    <CloseButton onClick={onClose} aria-label="Close">
-                        <X size={20} />
-                    </CloseButton>
-                </Header>
+  const isCompleted = task.status === 'DONE';
 
-                <Content>
-                    <Section>
-                        <Label>Priority</Label>
-                        <PrioritySelector value={priority} onChange={setPriority} />
-                    </Section>
+  return (
+    <>
+      <Overlay isVisible={isOpen} onClick={onClose} />
+      <DrawerContainer $isOpen={isOpen} onKeyDown={handleKeyDown}>
+        <Header>
+          <TitleInput
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Task title..."
+          />
+          <HeaderActions>
+            <TimerButton onClick={handleStartTimer}>
+              <Clock size={16} />
+              Focus
+            </TimerButton>
+            <CloseButton onClick={onClose} aria-label="Close">
+              <X size={20} />
+            </CloseButton>
+          </HeaderActions>
+        </Header>
 
-                    <Section>
-                        <Label>Notes</Label>
-                        <NotesTextarea
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                            placeholder="Add any notes or context for this task..."
-                        />
-                    </Section>
+        <Content>
+          <Section>
+            <Label>Priority</Label>
+            <PrioritySelector value={priority} onChange={setPriority} />
+          </Section>
 
-                    <Section>
-                        <Label>Due Date</Label>
-                        <DateInput
-                            type="date"
-                            value={dueDate}
-                            onChange={(e) => setDueDate(e.target.value)}
-                        />
-                    </Section>
+          <Section>
+            <Label>Notes</Label>
+            <NotesTextarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Add any notes or context for this task..."
+            />
+          </Section>
 
-                    <Section>
-                        <Label>Tags</Label>
-                        <TagInput tags={tags} onChange={setTags} />
-                    </Section>
-                </Content>
+          <Section>
+            <Label>Due Date</Label>
+            <DateInput
+              type="date"
+              value={dueDate}
+              onChange={(e) => setDueDate(e.target.value)}
+            />
+          </Section>
 
-                <Footer>
-                    <CompleteButton onClick={handleComplete} disabled={isCompleted}>
-                        <Check size={20} />
-                        {isCompleted ? 'Completed' : 'Mark Complete'}
-                    </CompleteButton>
-                    <DeleteButton onClick={handleDelete} aria-label="Delete task">
-                        <Trash2 size={20} />
-                    </DeleteButton>
-                </Footer>
-            </DrawerContainer>
-        </>
-    );
+          <Section>
+            <Label>Tags</Label>
+            <TagInput tags={tags} onChange={setTags} />
+          </Section>
+        </Content>
+
+        <Footer>
+          <CompleteButton onClick={handleComplete} disabled={isCompleted}>
+            <Check size={20} />
+            {isCompleted ? 'Completed' : 'Mark Complete'}
+          </CompleteButton>
+          <DeleteButton onClick={handleDelete} aria-label="Delete task">
+            <Trash2 size={20} />
+          </DeleteButton>
+        </Footer>
+      </DrawerContainer>
+    </>
+  );
 };

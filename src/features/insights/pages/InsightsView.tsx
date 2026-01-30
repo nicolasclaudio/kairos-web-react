@@ -2,10 +2,10 @@ import React from 'react';
 import styled from 'styled-components';
 import { useTaskStore } from '../../../stores/taskStore';
 import { calculateMetrics } from '../../../utils/analyticsUtils';
-import { MetricCard } from './MetricCard';
-import { ActivityHeatmap } from './ActivityHeatmap';
-import { PriorityDonutChart } from './PriorityDonutChart';
-import { TopAchievements } from './TopAchievements';
+import { MetricCard } from "../components/MetricCard";
+import { ActivityHeatmap } from "../components/ActivityHeatmap";
+import { PriorityDonutChart } from "../components/PriorityDonutChart";
+import { TopAchievements } from "../components/TopAchievements";
 
 const Container = styled.div`
   padding: 40px;

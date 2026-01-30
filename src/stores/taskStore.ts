@@ -12,9 +12,16 @@ interface TaskState {
     fetchTasks: () => Promise<void>;
     addTask: (title: string, priority?: TaskPriority) => Promise<void>;
     toggleTask: (id: string) => Promise<void>;
-    deleteTask: (id: string) => Promise<void>;
-    updateTask: (id: string, updates: Partial<Task>) => Promise<void>;
+    updateTask: (id: string, updates: Partial<Task>) => void;
+    deleteTask: (id: string) => void;
+    importTasks: (tasks: Task[]) => void;
+    deleteMultipleTasks: (ids: string[]) => void;
     clearCompleted: () => Promise<void>;
+
+    // Daily Plan Actions
+    addToDailyPlan: (taskId: string, priority?: number) => void;
+    removeFromDailyPlan: (taskId: string) => void;
+    endOfDay: () => void;
 }
 
 export const useTaskStore = create<TaskState>()(
@@ -120,6 +127,40 @@ export const useTaskStore = create<TaskState>()(
                         });
                     }
                 },
+
+                importTasks: (newTasks) => set((state) => {
+                    const taskMap = new Map(state.tasks.map(t => [t.id, t]));
+                    newTasks.forEach(t => taskMap.set(t.id, t));
+                    return { tasks: Array.from(taskMap.values()) };
+                }),
+
+                deleteMultipleTasks: (ids) => set((state) => ({
+                    tasks: state.tasks.filter((t) => !ids.includes(t.id))
+                })),
+
+                addToDailyPlan: (taskId, priority) => set((state) => ({
+                    tasks: state.tasks.map((t) =>
+                        t.id === taskId
+                            ? { ...t, plannedAt: new Date().toISOString().split('T')[0], focusPriority: priority }
+                            : t
+                    )
+                })),
+
+                removeFromDailyPlan: (taskId) => set((state) => ({
+                    tasks: state.tasks.map((t) =>
+                        t.id === taskId
+                            ? { ...t, plannedAt: undefined, focusPriority: undefined }
+                            : t
+                    )
+                })),
+
+                endOfDay: () => set((state) => ({
+                    tasks: state.tasks.map((t) =>
+                        t.plannedAt
+                            ? { ...t, plannedAt: undefined, focusPriority: undefined }
+                            : t
+                    )
+                })),
             }),
             {
                 name: 'kairos-task-storage',

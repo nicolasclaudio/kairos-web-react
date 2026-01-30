@@ -3,8 +3,8 @@ import styled from 'styled-components';
 import { X } from 'lucide-react';
 
 interface TagInputProps {
-    tags: string[];
-    onChange: (tags: string[]) => void;
+  tags: string[];
+  onChange: (tags: string[]) => void;
 }
 
 const Container = styled.div`
@@ -26,7 +26,7 @@ const Tag = styled.div`
   gap: ${({ theme }) => theme.spacing.xs};
   padding: 4px 12px;
   background: #f1f5f9;
-  color: ${({ theme }) => theme.colors.slateGray};
+  color: ${({ theme }) => theme.colors.textSecondary};
   border-radius: 12px;
   font-size: ${({ theme }) => theme.fontSize.sm};
   transition: all ${({ theme }) => theme.transitions.fast};
@@ -48,7 +48,7 @@ const RemoveButton = styled.button`
   transition: color ${({ theme }) => theme.transitions.fast};
 
   &:hover {
-    color: ${({ theme }) => theme.colors.rojoCarmesi};
+    color: ${({ theme }) => theme.colors.danger};
   }
 `;
 
@@ -61,7 +61,7 @@ const Input = styled.input`
   outline: none;
 
   &:focus {
-    border-color: ${({ theme }) => theme.colors.azulKairos};
+    border-color: ${({ theme }) => theme.colors.primary};
   }
 
   &::placeholder {
@@ -70,42 +70,42 @@ const Input = styled.input`
 `;
 
 export const TagInput: React.FC<TagInputProps> = ({ tags, onChange }) => {
-    const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState('');
 
-    const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-        if ((e.key === 'Enter' || e.key === ',') && inputValue.trim()) {
-            e.preventDefault();
-            const newTag = inputValue.trim();
-            if (!tags.includes(newTag)) {
-                onChange([...tags, newTag]);
-            }
-            setInputValue('');
-        }
-    };
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if ((e.key === 'Enter' || e.key === ',') && inputValue.trim()) {
+      e.preventDefault();
+      const newTag = inputValue.trim();
+      if (!tags.includes(newTag)) {
+        onChange([...tags, newTag]);
+      }
+      setInputValue('');
+    }
+  };
 
-    const removeTag = (tagToRemove: string) => {
-        onChange(tags.filter((tag) => tag !== tagToRemove));
-    };
+  const removeTag = (tagToRemove: string) => {
+    onChange(tags.filter((tag) => tag !== tagToRemove));
+  };
 
-    return (
-        <Container>
-            <TagsContainer>
-                {tags.map((tag) => (
-                    <Tag key={tag}>
-                        {tag}
-                        <RemoveButton onClick={() => removeTag(tag)} aria-label={`Remove ${tag}`}>
-                            <X size={14} />
-                        </RemoveButton>
-                    </Tag>
-                ))}
-            </TagsContainer>
-            <Input
-                type="text"
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder="Add a tag (press Enter or comma)"
-            />
-        </Container>
-    );
+  return (
+    <Container>
+      <TagsContainer>
+        {tags.map((tag) => (
+          <Tag key={tag}>
+            {tag}
+            <RemoveButton onClick={() => removeTag(tag)} aria-label={`Remove ${tag}`}>
+              <X size={14} />
+            </RemoveButton>
+          </Tag>
+        ))}
+      </TagsContainer>
+      <Input
+        type="text"
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
+        onKeyDown={handleKeyDown}
+        placeholder="Add a tag (press Enter or comma)"
+      />
+    </Container>
+  );
 };

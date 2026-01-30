@@ -6,7 +6,7 @@ export const KairosInput = styled.input`
   border-radius: 8px;
   border: 1px solid ${({ theme }) => theme.colors.border};
   background-color: ${({ theme }) => theme.colors.kairosOffWhite};
-  font-size: ${({ theme }) => theme.typography.sizes.base};
+  font-size: 1rem;
   color: ${({ theme }) => theme.colors.text};
   transition: all 0.2s ease-in-out;
   outline: none;
@@ -30,13 +30,13 @@ export const InputGroup = styled.div`
 `;
 
 export const Label = styled.label`
-  font-size: ${({ theme }) => theme.typography.sizes.sm};
+  font-size: 0.875rem;
   color: ${({ theme }) => theme.colors.textSecondary};
   font-weight: 500;
 `;
 
 export const ErrorText = styled.span`
   color: ${({ theme }) => theme.colors.danger};
-  font-size: ${({ theme }) => theme.typography.sizes.xs};
+  font-size: 0.75rem;
   margin-top: 4px;
 `;

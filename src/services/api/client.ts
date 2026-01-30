@@ -38,7 +38,7 @@ apiClient.interceptors.response.use(
             console.error('Access denied');
         }
 
-        if (error.response?.status >= 500) {
+        if (error.response?.status && error.response.status >= 500) {
             console.error('Server error:', error.message);
         }
 

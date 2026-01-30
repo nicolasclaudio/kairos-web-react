@@ -15,6 +15,7 @@ export interface Task {
     updatedAt: Date;
     plannedAt?: string; // ISO Date string (YYYY-MM-DD)
     focusPriority?: number; // 1, 2, 3
+    goalId?: string;
 }
 
 export type TaskStatus = 'TODO' | 'IN_PROGRESS' | 'DONE' | 'ARCHIVED';
@@ -29,6 +30,7 @@ export interface CreateTaskDTO {
     projectId?: string;
     tags?: string[];
     metaScore?: number;
+    goalId?: string;
 }
 
 export interface UpdateTaskDTO extends Partial<CreateTaskDTO> {

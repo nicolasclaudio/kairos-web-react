@@ -1,5 +1,5 @@
-import { startOfWeek, endOfWeek, eachDayOfInterval, format, isSameDay, subDays } from 'date-fns';
-import { es } from 'date-fns/locale';
+import { eachDayOfInterval, isSameDay, subDays } from 'date-fns';
+
 import type { Task, TaskPriority } from '../types';
 import type { MetricData, HeatmapDay, PriorityStats, Achievement } from '../types/analytics';
 

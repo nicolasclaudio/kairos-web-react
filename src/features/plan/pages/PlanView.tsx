@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { DndContext, DragEndEvent, DragOverlay } from '@dnd-kit/core';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { useTaskStore } from '../../../stores/taskStore';
+import { useTasksStore } from '@/store/useTasksStore';
 import { DailyLayoutContainer, MainArea, Header, Title, DateDisplay, BigThreeGrid, OtherTasksList, SectionTitle } from '../components/DailyLayout';
 import { DailyProgressBar } from '../components/DailyProgressBar';
 import { FocusSlot } from '../components/FocusSlot';
@@ -10,7 +10,7 @@ import { InboxSource } from '../components/InboxSource';
 import { TaskCard } from '../../../components/common/TaskCard';
 
 export const PlanView: React.FC = () => {
-    const { tasks, addToDailyPlan, removeFromDailyPlan, toggleTask } = useTaskStore();
+    const { tasks, addToDailyPlan, removeFromDailyPlan, toggleTask } = useTasksStore();
 
     // Filter tasks
     const today = new Date().toISOString().split('T')[0];

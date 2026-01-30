@@ -14,6 +14,7 @@ import { RegisterPage } from './features/auth/pages/RegisterPage';
 import { ProtectedRoute } from './features/auth/layout/ProtectedRoute';
 import { DashboardLayout } from './components/layout/DashboardLayout';
 import { PlanView } from './features/plan/pages/PlanView';
+import { ToastContainer, NotificationCenter, DailyBriefing } from './features/notifications';
 
 const AppRoutes = () => {
     return (
@@ -42,6 +43,9 @@ function App() {
             <ThemeProvider theme={lightTheme}>
                 <GlobalStyles />
                 <BrowserRouter>
+                    <ToastContainer />
+                    <NotificationCenter />
+                    <DailyBriefing />
                     <AppRoutes />
                 </BrowserRouter>
                 <ReactQueryDevtools initialIsOpen={false} />

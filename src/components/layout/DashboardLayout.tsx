@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Sidebar } from '../../components/layout/Sidebar';
 import { SyncIndicator } from '../../features/auth/components/SyncIndicator';
+import { NotificationBadge } from '../../features/notifications';
 import { Outlet } from 'react-router-dom';
 
 const LayoutContainer = styled.div`
@@ -21,6 +22,8 @@ const MainContent = styled.main`
 const Header = styled.header`
   display: flex;
   justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
   padding: 16px 40px;
   background: transparent;
   position: absolute;
@@ -41,6 +44,7 @@ export const DashboardLayout: React.FC = () => {
             <Sidebar />
             <MainContent>
                 <Header>
+                    <NotificationBadge />
                     <SyncIndicator />
                 </Header>
                 <div style={{ marginTop: 60 }}> {/* Spacing for header */}

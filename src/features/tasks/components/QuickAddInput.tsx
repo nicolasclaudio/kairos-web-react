@@ -3,8 +3,8 @@ import styled from 'styled-components';
 import { Plus } from 'lucide-react';
 
 interface QuickAddInputProps {
-    onAdd: (title: string) => void;
-    placeholder?: string;
+  onAdd: (title: string) => void;
+  placeholder?: string;
 }
 
 const Container = styled.div`
@@ -23,7 +23,7 @@ const InputWrapper = styled.div`
   border: 2px solid transparent;
 
   &:focus-within {
-    border-color: ${({ theme }) => theme.colors.azulKairos};
+    border-color: ${({ theme }) => theme.colors.primary};
     box-shadow: 0 4px 12px 0 rgba(0, 82, 255, 0.15);
   }
 `;
@@ -52,33 +52,33 @@ const StyledInput = styled.input`
 `;
 
 export const QuickAddInput: React.FC<QuickAddInputProps> = ({
-    onAdd,
-    placeholder = 'Add a new task...',
+  onAdd,
+  placeholder = 'Add a new task...',
 }) => {
-    const [value, setValue] = useState('');
+  const [value, setValue] = useState('');
 
-    const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Enter' && value.trim()) {
-            onAdd(value.trim());
-            setValue('');
-        }
-    };
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && value.trim()) {
+      onAdd(value.trim());
+      setValue('');
+    }
+  };
 
-    return (
-        <Container>
-            <InputWrapper>
-                <IconContainer>
-                    <Plus size={20} />
-                </IconContainer>
-                <StyledInput
-                    type="text"
-                    value={value}
-                    onChange={(e) => setValue(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    placeholder={placeholder}
-                    autoFocus
-                />
-            </InputWrapper>
-        </Container>
-    );
+  return (
+    <Container>
+      <InputWrapper>
+        <IconContainer>
+          <Plus size={20} />
+        </IconContainer>
+        <StyledInput
+          type="text"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder={placeholder}
+          autoFocus
+        />
+      </InputWrapper>
+    </Container>
+  );
 };

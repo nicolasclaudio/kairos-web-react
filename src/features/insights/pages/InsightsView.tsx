@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useTaskStore } from '../../../stores/taskStore';
+import { useTasksStore } from '@/store/useTasksStore';
 import { calculateMetrics } from '../../../utils/analyticsUtils';
 import { MetricCard } from "../components/MetricCard";
 import { ActivityHeatmap } from "../components/ActivityHeatmap";
@@ -52,7 +52,7 @@ const DashboardGrid = styled.div`
 `;
 
 export const InsightsView: React.FC = () => {
-  const { tasks } = useTaskStore();
+  const { tasks } = useTasksStore();
 
   // Calculate specific metrics
   const metrics = React.useMemo(() => calculateMetrics(tasks), [tasks]);

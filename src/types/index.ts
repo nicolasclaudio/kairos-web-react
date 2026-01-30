@@ -4,3 +4,4 @@ export * from './user';
 export * from './project';
 export * from './analytics';
 export * from './common';
+export * from './goal';

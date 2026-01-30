@@ -7,6 +7,7 @@ import { Overlay } from '@/components/common/Overlay';
 import { useTimerStore } from '@/store/useTimerStore';
 import { minutesToSeconds } from '@/utils/timeUtils';
 import type { Task, TaskPriority } from '@/types';
+import { useGoalStore } from '../../../stores/useGoalStore';
 
 interface TaskDrawerProps {
   task: Task | null;
@@ -59,7 +60,7 @@ const TimerButton = styled.button`
   justify-content: center;
   gap: ${({ theme }) => theme.spacing.xs};
   padding: ${({ theme }) => theme.spacing.sm} ${({ theme }) => theme.spacing.md};
-  background: ${({ theme }) => theme.colors.azulKairos};
+  background: ${({ theme }) => theme.colors.primary};
   color: white;
   border: none;
   border-radius: ${({ theme }) => theme.borderRadius.md};
@@ -77,14 +78,14 @@ const TitleInput = styled.input`
   flex: 1;
   font-size: ${({ theme }) => theme.fontSize.xl};
   font-weight: ${({ theme }) => theme.fontWeight.bold};
-  color: ${({ theme }) => theme.colors.charcoal};
+  color: ${({ theme }) => theme.colors.text};
   border: none;
   background: transparent;
   outline: none;
   padding: ${({ theme }) => theme.spacing.xs} 0;
 
   &:focus {
-    border-bottom: 2px solid ${({ theme }) => theme.colors.azulKairos};
+    border-bottom: 2px solid ${({ theme }) => theme.colors.primary};
   }
 `;
 
@@ -143,7 +144,7 @@ const NotesTextarea = styled.textarea`
   outline: none;
 
   &:focus {
-    border-color: ${({ theme }) => theme.colors.azulKairos};
+    border-color: ${({ theme }) => theme.colors.primary};
   }
 
   &::placeholder {
@@ -160,7 +161,7 @@ const DateInput = styled.input`
   outline: none;
 
   &:focus {
-    border-color: ${({ theme }) => theme.colors.azulKairos};
+    border-color: ${({ theme }) => theme.colors.primary};
   }
 `;
 
@@ -175,7 +176,7 @@ const Footer = styled.div`
 const CompleteButton = styled.button`
   flex: 1;
   padding: ${({ theme }) => theme.spacing.md} ${({ theme }) => theme.spacing.lg};
-  background: ${({ theme }) => theme.colors.verdeEsmeralda};
+  background: ${({ theme }) => theme.colors.success};
   color: white;
   border: none;
   border-radius: ${({ theme }) => theme.borderRadius.md};
@@ -206,14 +207,30 @@ const DeleteButton = styled.button`
   background: none;
   border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: ${({ theme }) => theme.borderRadius.md};
-  color: ${({ theme }) => theme.colors.slateGray};
+  color: ${({ theme }) => theme.colors.textSecondary};
   cursor: pointer;
   transition: all ${({ theme }) => theme.transitions.fast};
 
   &:hover {
-    border-color: ${({ theme }) => theme.colors.rojoCarmesi};
-    background: ${({ theme }) => theme.colors.rojoCarmesi};
+    border-color: ${({ theme }) => theme.colors.danger};
+    background: ${({ theme }) => theme.colors.danger};
     color: white;
+  }
+`;
+
+const StyledSelect = styled.select`
+  width: 100%;
+  padding: ${({ theme }) => theme.spacing.sm} ${({ theme }) => theme.spacing.md};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: ${({ theme }) => theme.borderRadius.md};
+  font-size: ${({ theme }) => theme.fontSize.base};
+  color: ${({ theme }) => theme.colors.text};
+  outline: none;
+  background: transparent;
+  cursor: pointer;
+
+  &:focus {
+    border-color: ${({ theme }) => theme.colors.primary};
   }
 `;
 
@@ -230,6 +247,8 @@ export const TaskDrawer: React.FC<TaskDrawerProps> = ({
   const [priority, setPriority] = useState<TaskPriority>('MEDIUM');
   const [tags, setTags] = useState<string[]>([]);
   const [dueDate, setDueDate] = useState('');
+  const [goalId, setGoalId] = useState<string | undefined>(undefined);
+  const { goals } = useGoalStore();
   const { startSession } = useTimerStore();
 
   // Update local state when task changes
@@ -240,6 +259,7 @@ export const TaskDrawer: React.FC<TaskDrawerProps> = ({
       setPriority(task.priority);
       setTags(task.tags || []);
       setDueDate(task.dueDate ? new Date(task.dueDate).toISOString().split('T')[0] : '');
+      setGoalId(task.goalId);
     }
   }, [task]);
 
@@ -254,11 +274,12 @@ export const TaskDrawer: React.FC<TaskDrawerProps> = ({
         priority,
         tags,
         dueDate: dueDate ? new Date(dueDate) : undefined,
+        goalId,
       });
     }, 500);
 
     return () => clearTimeout(timeout);
-  }, [title, description, priority, tags, dueDate, task, onUpdate]);
+  }, [title, description, priority, tags, dueDate, goalId, task, onUpdate]);
 
   const handleComplete = () => {
     if (task) {
@@ -316,6 +337,21 @@ export const TaskDrawer: React.FC<TaskDrawerProps> = ({
           <Section>
             <Label>Priority</Label>
             <PrioritySelector value={priority} onChange={setPriority} />
+          </Section>
+
+          <Section>
+            <Label>Goal</Label>
+            <StyledSelect
+              value={goalId || ''}
+              onChange={(e) => setGoalId(e.target.value || undefined)}
+            >
+              <option value="">No Goal Linked</option>
+              {goals.map(g => (
+                <option key={g.id} value={g.id}>
+                  {g.icon} {g.title}
+                </option>
+              ))}
+            </StyledSelect>
           </Section>
 
           <Section>

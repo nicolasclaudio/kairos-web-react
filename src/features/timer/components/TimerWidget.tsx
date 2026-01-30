@@ -3,14 +3,13 @@ import styled from 'styled-components';
 import { Maximize2 } from 'lucide-react';
 import { CircularProgress } from './CircularProgress';
 import { formatTime } from '@/utils/timeUtils';
-import { useTimerStore } from '@/store/useTimerStore';
 
 interface TimerWidgetProps {
-    timeRemaining: number;
-    progress: number;
-    isActive: boolean;
-    isPaused: boolean;
-    onExpand: () => void;
+  timeRemaining: number;
+  progress: number;
+  isActive: boolean;
+  isPaused: boolean;
+  onExpand: () => void;
 }
 
 const Widget = styled.div<{ $isActive: boolean; $isPaused: boolean }>`
@@ -24,16 +23,16 @@ const Widget = styled.div<{ $isActive: boolean; $isPaused: boolean }>`
   transition: all ${({ theme }) => theme.transitions.base};
   border-radius: 50%;
   
-  ${({ $isActive, $isPaused, theme }) =>
-        $isActive &&
-        !$isPaused &&
-        `
+  ${({ $isActive, $isPaused }) =>
+    $isActive &&
+    !$isPaused &&
+    `
     box-shadow: 0 0 20px rgba(0, 82, 255, 0.3);
   `}
   
-  ${({ $isPaused, theme }) =>
-        $isPaused &&
-        `
+  ${({ $isPaused }) =>
+    $isPaused &&
+    `
     box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
   `}
 
@@ -65,7 +64,7 @@ const TimeDisplay = styled.div<{ $isPaused: boolean }>`
   transform: translate(-50%, -50%);
   font-size: ${({ theme }) => theme.fontSize.lg};
   font-weight: ${({ theme }) => theme.fontWeight.bold};
-  color: ${({ theme, $isPaused }) => ($isPaused ? theme.colors.ambar : theme.colors.charcoal)};
+  color: ${({ theme, $isPaused }) => ($isPaused ? theme.colors.warning : theme.colors.text)};
   text-align: center;
 `;
 
@@ -75,7 +74,7 @@ const ExpandIcon = styled.div`
   right: 5px;
   width: 20px;
   height: 20px;
-  background: ${({ theme }) => theme.colors.offWhite};
+  background: ${({ theme }) => theme.colors.kairosOffWhite};
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -89,32 +88,32 @@ const ExpandIcon = styled.div`
 `;
 
 export const TimerWidget: React.FC<TimerWidgetProps> = ({
-    timeRemaining,
-    progress,
-    isActive,
-    isPaused,
-    onExpand,
+  timeRemaining,
+  progress,
+  isActive,
+  isPaused,
+  onExpand,
 }) => {
-    if (!isActive) return null;
+  if (!isActive) return null;
 
-    const progressColor = isPaused ? '#F59E0B' : '#0052FF';
+  const progressColor = isPaused ? '#F59E0B' : '#0052FF';
 
-    return (
-        <Widget $isActive={isActive} $isPaused={isPaused} onClick={onExpand}>
-            <ProgressContainer>
-                <CircularProgress
-                    progress={progress}
-                    size={100}
-                    strokeWidth={6}
-                    color={progressColor}
-                />
-                <TimeDisplay $isPaused={isPaused}>
-                    {formatTime(timeRemaining)}
-                </TimeDisplay>
-                <ExpandIcon>
-                    <Maximize2 size={12} />
-                </ExpandIcon>
-            </ProgressContainer>
-        </Widget>
-    );
+  return (
+    <Widget $isActive={isActive} $isPaused={isPaused} onClick={onExpand}>
+      <ProgressContainer>
+        <CircularProgress
+          progress={progress}
+          size={100}
+          strokeWidth={6}
+          color={progressColor}
+        />
+        <TimeDisplay $isPaused={isPaused}>
+          {formatTime(timeRemaining)}
+        </TimeDisplay>
+        <ExpandIcon>
+          <Maximize2 size={12} />
+        </ExpandIcon>
+      </ProgressContainer>
+    </Widget>
+  );
 };

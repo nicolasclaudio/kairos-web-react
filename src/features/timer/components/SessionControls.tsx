@@ -1,4 +1,3 @@
-import React from 'react';
 import styled from 'styled-components';
 import { Play, Pause, RotateCcw } from 'lucide-react';
 
@@ -24,7 +23,7 @@ const ControlButton = styled.button<{ $color?: string }>`
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: ${({ theme }) => theme.colors.offWhite};
+  background: ${({ theme }) => theme.colors.kairosOffWhite};
   border: 2px solid ${({ theme }) => theme.colors.border};
   color: ${({ $color, theme }) => $color || theme.colors.text};
   cursor: pointer;

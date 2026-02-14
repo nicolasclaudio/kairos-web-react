@@ -1,13 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useTaskStore } from '../../../stores/taskStore';
+import { useTasksStore } from '@/store/useTasksStore';
 import { calculateMetrics } from '../../../utils/analyticsUtils';
-import { MetricCard } from "../components/MetricCard";
-import { ActivityHeatmap } from "../components/ActivityHeatmap";
-import { PriorityDonutChart } from "../components/PriorityDonutChart";
-import { TopAchievements } from "../components/TopAchievements";
+import { MetricCard } from '../components/MetricCard';
+import { ActivityHeatmap } from '../components/ActivityHeatmap';
+import { PriorityDonutChart } from '../components/PriorityDonutChart';
+import { TopAchievements } from '../components/TopAchievements';
+import { PageTransition } from '@/components/common';
 
-const Container = styled.div`
+const PageContainer = styled.div`
   padding: 40px;
   background: ${({ theme }) => theme.colors.background}; // Off-White
   min-height: 100vh;
@@ -41,7 +42,7 @@ const MetricsGrid = styled.div`
   margin-bottom: 32px;
 `;
 
-const DashboardGrid = styled.div`
+const ChartsGrid = styled.div`
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 24px;
@@ -52,46 +53,48 @@ const DashboardGrid = styled.div`
 `;
 
 export const InsightsView: React.FC = () => {
-  const { tasks } = useTaskStore();
+  const { tasks } = useTasksStore();
 
   // Calculate specific metrics
   const metrics = React.useMemo(() => calculateMetrics(tasks), [tasks]);
 
   return (
-    <Container>
-      <Header>
-        <Title>Espejo de Productividad</Title>
-        <Subtitle>Analiza tus patrones y celebra tus logros</Subtitle>
-      </Header>
+    <PageTransition>
+      <PageContainer>
+        <Header>
+          <Title>Espejo de Productividad</Title>
+          <Subtitle>Analiza tus patrones y celebra tus logros</Subtitle>
+        </Header>
 
-      <MetricsGrid>
-        <MetricCard
-          label="Tareas Completadas"
-          value={metrics.tasksCompleted}
-          subtext="Total histórico"
-        />
-        <MetricCard
-          label="Horas de Enfoque"
-          value={metrics.focusHours}
-          subtext="Tiempo de calidad invertido"
-        />
-        <MetricCard
-          label="Racha Actual"
-          value={`${metrics.currentStreak} días`}
-          subtext="Mantén el ritmo"
-        />
-        <MetricCard
-          label="Promedio Semanal"
-          value={metrics.weeklyAverage}
-          subtext="Tareas por semana"
-        />
-      </MetricsGrid>
+        <MetricsGrid>
+          <MetricCard
+            label="Tareas Completadas"
+            value={metrics.tasksCompleted}
+            subtext="Total histórico"
+          />
+          <MetricCard
+            label="Horas de Enfoque"
+            value={metrics.focusHours}
+            subtext="Tiempo de calidad invertido"
+          />
+          <MetricCard
+            label="Racha Actual"
+            value={`${metrics.currentStreak} días`}
+            subtext="Mantén el ritmo"
+          />
+          <MetricCard
+            label="Promedio Semanal"
+            value={metrics.weeklyAverage}
+            subtext="Tareas por semana"
+          />
+        </MetricsGrid>
 
-      <DashboardGrid>
-        <ActivityHeatmap tasks={tasks} />
-        <PriorityDonutChart tasks={tasks} />
-        <TopAchievements tasks={tasks} />
-      </DashboardGrid>
-    </Container>
+        <ChartsGrid>
+          <ActivityHeatmap tasks={tasks} />
+          <PriorityDonutChart tasks={tasks} />
+          <TopAchievements tasks={tasks} />
+        </ChartsGrid>
+      </PageContainer>
+    </PageTransition>
   );
 };

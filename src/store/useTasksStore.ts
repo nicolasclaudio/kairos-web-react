@@ -10,13 +10,14 @@ interface TasksState {
     isDrawerOpen: boolean;
 
     // Actions
-    setTasks: (tasks: Task[]) => void;
-    addTask: (task: Task) => void;
-    updateTask: (id: string, updates: Partial<Task>) => void;
+    addTask: (title: string) => void;
+    toggleTask: (id: string) => void;
     deleteTask: (id: string) => void;
-    toggleTaskComplete: (id: string) => void;
-    openDrawer: (taskId: string) => void;
+    updateTask: (id: string, updates: Partial<Task>) => void;
+    openDrawer: (id?: string) => void;
     closeDrawer: () => void;
+    addToDailyPlan: (id: string, priority?: number) => void;
+    removeFromDailyPlan: (id: string) => void;
 }
 
 export const useTasksStore = create<TasksState>()(
@@ -29,25 +30,46 @@ export const useTasksStore = create<TasksState>()(
                 selectedTaskId: null,
                 isDrawerOpen: false,
 
-                setTasks: (tasks) => set({ tasks }),
-
-                addTask: (task) => set((state) => ({
-                    tasks: [task, ...state.tasks]  // Add to beginning for newest first
-                })),
-
-                updateTask: (id, updates) => set((state) => ({
+                addToDailyPlan: (id: string, priority?: number) => set((state) => ({
                     tasks: state.tasks.map(task =>
-                        task.id === id ? { ...task, ...updates, updatedAt: new Date() } : task
+                        task.id === id
+                            ? {
+                                ...task,
+                                plannedAt: new Date().toISOString().split('T')[0],
+                                focusPriority: priority,
+                                updatedAt: new Date()
+                            }
+                            : task
                     )
                 })),
 
-                deleteTask: (id) => set((state) => ({
-                    tasks: state.tasks.filter(task => task.id !== id),
-                    selectedTaskId: state.selectedTaskId === id ? null : state.selectedTaskId,
-                    isDrawerOpen: state.selectedTaskId === id ? false : state.isDrawerOpen,
+                removeFromDailyPlan: (id: string) => set((state) => ({
+                    tasks: state.tasks.map(task =>
+                        task.id === id
+                            ? {
+                                ...task,
+                                plannedAt: undefined,
+                                focusPriority: undefined,
+                                updatedAt: new Date()
+                            }
+                            : task
+                    )
                 })),
 
-                toggleTaskComplete: (id) => set((state) => ({
+                addTask: (title: string) => set((state) => {
+                    const newTask: Task = {
+                        id: crypto.randomUUID(),
+                        title,
+                        status: 'TODO',
+                        priority: 'MEDIUM',
+                        createdAt: new Date(),
+                        updatedAt: new Date(),
+                        tags: []
+                    };
+                    return { tasks: [newTask, ...state.tasks] };
+                }),
+
+                toggleTask: (id: string) => set((state) => ({
                     tasks: state.tasks.map(task =>
                         task.id === id
                             ? {
@@ -60,8 +82,20 @@ export const useTasksStore = create<TasksState>()(
                     )
                 })),
 
-                openDrawer: (taskId) => set({ selectedTaskId: taskId, isDrawerOpen: true }),
-                closeDrawer: () => set({ isDrawerOpen: false }),
+                deleteTask: (id: string) => set((state) => ({
+                    tasks: state.tasks.filter(task => task.id !== id),
+                    selectedTaskId: state.selectedTaskId === id ? null : state.selectedTaskId,
+                    isDrawerOpen: state.selectedTaskId === id ? false : state.isDrawerOpen,
+                })),
+
+                updateTask: (id: string, updates: Partial<Task>) => set((state) => ({
+                    tasks: state.tasks.map(task =>
+                        task.id === id ? { ...task, ...updates, updatedAt: new Date() } : task
+                    )
+                })),
+
+                openDrawer: (id?: string) => set({ selectedTaskId: id || null, isDrawerOpen: true }),
+                closeDrawer: () => set({ isDrawerOpen: false, selectedTaskId: null }),
             }),
             { name: 'kairos-tasks-storage' }
         )

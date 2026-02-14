@@ -2,15 +2,16 @@ import React, { useMemo } from 'react';
 import { DndContext, DragEndEvent, DragOverlay } from '@dnd-kit/core';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { useTaskStore } from '../../../stores/taskStore';
+import { useTasksStore } from '@/store/useTasksStore';
 import { DailyLayoutContainer, MainArea, Header, Title, DateDisplay, BigThreeGrid, OtherTasksList, SectionTitle } from '../components/DailyLayout';
 import { DailyProgressBar } from '../components/DailyProgressBar';
 import { FocusSlot } from '../components/FocusSlot';
 import { InboxSource } from '../components/InboxSource';
 import { TaskCard } from '../../../components/common/TaskCard';
+import { PageTransition } from '@/components/common';
 
 export const PlanView: React.FC = () => {
-    const { tasks, addToDailyPlan, removeFromDailyPlan, toggleTask } = useTaskStore();
+    const { tasks, addToDailyPlan, removeFromDailyPlan, toggleTask } = useTasksStore();
 
     // Filter tasks
     const today = new Date().toISOString().split('T')[0];
@@ -66,48 +67,49 @@ export const PlanView: React.FC = () => {
     };
 
     return (
-        <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-            <DailyLayoutContainer>
-                <DailyProgressBar tasks={dailyTasks} />
-                <MainArea>
-                    <Header>
-                        <Title>El Ritual del <span>Mañana</span></Title>
-                        <DateDisplay>{format(new Date(), "d 'de' MMMM", { locale: es })}</DateDisplay>
-                    </Header>
+        <PageTransition>
+            <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+                <DailyLayoutContainer>
+                    <DailyProgressBar tasks={dailyTasks} />
+                    <MainArea>
+                        <Header>
+                            <Title>El Ritual del <span>Mañana</span></Title>
+                            <DateDisplay>{format(new Date(), "d 'de' MMMM", { locale: es })}</DateDisplay>
+                        </Header>
 
-                    <BigThreeGrid>
-                        {[1, 2, 3].map(priority => (
-                            <FocusSlot key={priority} priority={priority} task={focusTasks[priority]}>
-                                {focusTasks[priority] && <TaskCard task={focusTasks[priority]} onToggle={toggleTask} />}
-                            </FocusSlot>
-                        ))}
-                    </BigThreeGrid>
+                        <BigThreeGrid>
+                            {[1, 2, 3].map(priority => (
+                                <FocusSlot key={priority} priority={priority} task={focusTasks[priority]}>
+                                    {focusTasks[priority] && <TaskCard task={focusTasks[priority]} onToggle={toggleTask} />}
+                                </FocusSlot>
+                            ))}
+                        </BigThreeGrid>
 
-                    <SectionTitle>Otras tareas para hoy</SectionTitle>
-                    {/* Simplified Drop Zone for 'Other' tasks could be added here later */}
-                    <OtherTasksList>
-                        {otherDailyTasks.map(task => (
-                            <TaskCard key={task.id} task={task} onToggle={toggleTask} />
-                        ))}
-                    </OtherTasksList>
-                </MainArea>
+                        <SectionTitle>Otras tareas para hoy</SectionTitle>
+                        <OtherTasksList>
+                            {otherDailyTasks.map(task => (
+                                <TaskCard key={task.id} task={task} onToggle={toggleTask} />
+                            ))}
+                        </OtherTasksList>
+                    </MainArea>
 
-                <InboxSource tasks={inboxTasks} />
-            </DailyLayoutContainer>
+                    <InboxSource tasks={inboxTasks} />
+                </DailyLayoutContainer>
 
-            <DragOverlay>
-                {activeTask ? (
-                    <div style={{
-                        padding: '12px',
-                        background: 'white',
-                        borderRadius: '8px',
-                        boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                        border: '1px solid #0052FF'
-                    }}>
-                        {activeTask.title}
-                    </div>
-                ) : null}
-            </DragOverlay>
-        </DndContext>
+                <DragOverlay>
+                    {activeTask ? (
+                        <div style={{
+                            padding: '12px',
+                            background: 'white',
+                            borderRadius: '8px',
+                            boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                            border: '1px solid #0052FF'
+                        }}>
+                            {activeTask.title}
+                        </div>
+                    ) : null}
+                </DragOverlay>
+            </DndContext>
+        </PageTransition>
     );
 };

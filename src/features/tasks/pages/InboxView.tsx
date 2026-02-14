@@ -9,11 +9,11 @@ import { FocusMode } from '../../timer/components/FocusMode';
 import { useTasksStore } from '@/store/useTasksStore';
 import { useTimerStore } from '@/store/useTimerStore';
 import { useTimer } from '@/hooks/useTimer';
-import type { Task } from '@/types';
+import { PageTransition } from '@/components/common';
 
 const PageContainer = styled.div`
   min-height: 100vh;
-  background: ${({ theme }) => theme.colors.offWhite};
+  background: ${({ theme }) => theme.colors.kairosOffWhite};
   padding: 40px;
 
   @media (max-width: 768px) {
@@ -33,13 +33,13 @@ const Header = styled.header`
 const Title = styled.h1`
   font-size: ${({ theme }) => theme.fontSize['3xl']};
   font-weight: ${({ theme }) => theme.fontWeight.bold};
-  color: ${({ theme }) => theme.colors.charcoal};
+  color: ${({ theme }) => theme.colors.text};
   margin: 0 0 ${({ theme }) => theme.spacing.xs} 0;
 `;
 
 const Subtitle = styled.p`
   font-size: ${({ theme }) => theme.fontSize.sm};
-  color: ${({ theme }) => theme.colors.slateGray};
+  color: ${({ theme }) => theme.colors.textSecondary};
   margin: 0;
 `;
 
@@ -50,7 +50,7 @@ export const InboxView: React.FC = () => {
     isDrawerOpen,
     addTask,
     updateTask,
-    toggleTaskComplete,
+    toggleTask,
     deleteTask,
     openDrawer,
     closeDrawer,
@@ -96,17 +96,7 @@ export const InboxView: React.FC = () => {
   }, [isCompleted, activeTaskId, endSession]);
 
   const handleAddTask = (title: string) => {
-    const newTask: Task = {
-      id: `task-${Date.now()}`,
-      title,
-      status: 'TODO',
-      priority: 'MEDIUM',
-      tags: [],
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-
-    addTask(newTask);
+    addTask(title);
   };
 
   const handlePlay = () => {
@@ -119,51 +109,53 @@ export const InboxView: React.FC = () => {
   };
 
   return (
-    <PageContainer>
-      <ContentWrapper>
-        <Header>
-          <Title>Kairos / Inbox</Title>
-          <Subtitle>{today}</Subtitle>
-        </Header>
+    <PageTransition>
+      <PageContainer>
+        <ContentWrapper>
+          <Header>
+            <Title>Kairos / Inbox</Title>
+            <Subtitle>{today}</Subtitle>
+          </Header>
 
-        <QuickAddInput onAdd={handleAddTask} />
+          <QuickAddInput onAdd={handleAddTask} />
 
-        <TaskList
-          tasks={tasks}
-          onToggle={toggleTaskComplete}
-          onTaskClick={(task) => openDrawer(task.id)}
+          <TaskList
+            tasks={tasks}
+            onToggle={toggleTask}
+            onTaskClick={(task) => openDrawer(task.id)}
+          />
+        </ContentWrapper>
+
+        <TaskDrawer
+          task={selectedTask}
+          isOpen={isDrawerOpen}
+          onClose={closeDrawer}
+          onUpdate={updateTask}
+          onComplete={toggleTask}
+          onDelete={deleteTask}
         />
-      </ContentWrapper>
 
-      <TaskDrawer
-        task={selectedTask}
-        isOpen={isDrawerOpen}
-        onClose={closeDrawer}
-        onUpdate={updateTask}
-        onComplete={toggleTaskComplete}
-        onDelete={deleteTask}
-      />
+        <TimerWidget
+          timeRemaining={timeRemaining}
+          progress={progress}
+          isActive={isActive}
+          isPaused={isPaused}
+          onExpand={toggleFocusMode}
+        />
 
-      <TimerWidget
-        timeRemaining={timeRemaining}
-        progress={progress}
-        isActive={isActive}
-        isPaused={isPaused}
-        onExpand={toggleFocusMode}
-      />
-
-      <FocusMode
-        isOpen={isInFocusMode}
-        timeRemaining={timeRemaining}
-        taskTitle={activeTaskTitle || ''}
-        isActive={isActive}
-        isPaused={isPaused}
-        isCompleted={isCompleted}
-        onClose={toggleFocusMode}
-        onPlay={handlePlay}
-        onPause={pauseTimer}
-        onReset={resetTimer}
-      />
-    </PageContainer>
+        <FocusMode
+          isOpen={isInFocusMode}
+          timeRemaining={timeRemaining}
+          taskTitle={activeTaskTitle || ''}
+          isActive={isActive}
+          isPaused={isPaused}
+          isCompleted={isCompleted}
+          onClose={toggleFocusMode}
+          onPlay={handlePlay}
+          onPause={pauseTimer}
+          onReset={resetTimer}
+        />
+      </PageContainer>
+    </PageTransition>
   );
 };

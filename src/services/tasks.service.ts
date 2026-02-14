@@ -21,6 +21,16 @@ export const tasksService = {
     },
 
     /**
+     * Obtiene todas las tareas asociadas a un objetivo
+     */
+    getByGoalId: async (goalId: string | number): Promise<{ tasks: Task[], totalMinutes: number }> => {
+        const response = await apiClient.get<{ tasks: Task[], totalMinutes: number }>(
+            API_ENDPOINTS.TASKS_BY_GOAL(goalId)
+        );
+        return response.data;
+    },
+
+    /**
      * Obtiene una tarea por ID
      */
     getById: async (id: string): Promise<Task> => {

@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 
 interface ButtonProps {
-    $variant?: 'primary' | 'secondary' | 'outline';
-    $fullWidth?: boolean;
+  $variant?: 'primary' | 'secondary' | 'outline';
+  $fullWidth?: boolean;
 }
 
 export const KairosButton = styled.button<ButtonProps>`
@@ -13,36 +13,36 @@ export const KairosButton = styled.button<ButtonProps>`
   padding: 12px 24px;
   border-radius: 8px;
   font-weight: 600;
-  font-size: ${({ theme }) => theme.typography.sizes.base};
+  font-size: 1rem;
   cursor: pointer;
   transition: all 0.2s ease;
   width: ${({ $fullWidth }) => ($fullWidth ? '100%' : 'auto')};
   
   /* Primary Variant */
   background-color: ${({ theme, $variant }) =>
-        $variant === 'outline' ? 'transparent' :
-            $variant === 'secondary' ? theme.colors.kairosSlateGray :
-                theme.colors.kairosAzul
-    };
+    $variant === 'outline' ? 'transparent' :
+      $variant === 'secondary' ? theme.colors.kairosSlateGray :
+        theme.colors.kairosAzul
+  };
   
   color: ${({ theme, $variant }) =>
-        $variant === 'outline' ? theme.colors.kairosAzul : 'white'
-    };
+    $variant === 'outline' ? theme.colors.kairosAzul : 'white'
+  };
 
   border: ${({ theme, $variant }) =>
-        $variant === 'outline' ? `1px solid ${theme.colors.kairosAzul}` : 'none'
-    };
+    $variant === 'outline' ? `1px solid ${theme.colors.kairosAzul}` : 'none'
+  };
 
   &:hover {
     background-color: ${({ theme, $variant }) =>
-        $variant === 'outline' ? 'rgba(0, 82, 255, 0.05)' :
-            $variant === 'secondary' ? theme.colors.text :
-                '#0043D9' // Darker shade of Azul Kairos
-    };
+    $variant === 'outline' ? 'rgba(0, 82, 255, 0.05)' :
+      $variant === 'secondary' ? theme.colors.text :
+        '#0043D9' // Darker shade of Azul Kairos
+  };
     transform: translateY(-1px);
     box-shadow: ${({ theme, $variant }) =>
-        $variant === 'outline' ? 'none' : theme.shadows.md
-    };
+    $variant === 'outline' ? 'none' : theme.shadows.md
+  };
   }
 
   &:active {
